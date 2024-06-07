@@ -11,7 +11,7 @@ import {
 
 import beepSound from "../assets/sound/beep.mp3"; // Import beep sound file
 import BarcodeIcon from "../icons/BarcodeIcon";
-import cameraClosed from "../assets/svg/camera-closed.svg";
+import CameraClosedIcon from "../assets/svg/camera-closed.svg";
 
 const BarcodeScanner = () => {
   const [data, setData] = useState(null);
@@ -161,7 +161,11 @@ const BarcodeScanner = () => {
   return (
     <div className="p-6 w-full h-dvh grid grid-cols-1 gap-6 place-items-center bg-blue-gray-100">
       <div className="flex justify-center items-center relative">
-        <img src={cameraClosed} alt="Camera Closed" className="absolute z-10" />
+        <img
+          src={CameraClosedIcon}
+          alt="Camera Closed"
+          className="absolute z-10"
+        />
         <video
           ref={videoRef}
           autoPlay
