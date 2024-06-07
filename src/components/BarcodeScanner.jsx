@@ -153,10 +153,6 @@ const BarcodeScanner = () => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log("isScanning:", isScanning);
-  }, [isScanning]);
-
   return (
     <div className="p-6 w-full h-dvh grid grid-cols-1 gap-6 place-items-center bg-blue-gray-50">
       <div className="flex justify-center items-center relative">
