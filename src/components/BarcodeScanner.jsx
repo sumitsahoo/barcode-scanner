@@ -96,7 +96,7 @@ const BarcodeScanner = () => {
 
           if (results && results.length > 0) {
             const result = results[0]?.decode();
-            const isValid = /^[\w-]*$/.test(result);
+            const isValid = /^[\w-]*$/.test(result); // Remove this check if you want to detect all characters
 
             if (isValid) {
               setIsScanning(false);
