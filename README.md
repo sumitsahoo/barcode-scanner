@@ -13,7 +13,7 @@ Display of scanning results in a dialog box
 Clone the repository:
 
 ```bash
-git clone
+git clone https://github.com/sumitsahoo/barcode-scanner.git
 ```
 
 Install the dependencies:
