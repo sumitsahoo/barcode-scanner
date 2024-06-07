@@ -1,5 +1,6 @@
 # Vite
 dist
+dev-dist
 
 # macOS
 .DS_STORE
