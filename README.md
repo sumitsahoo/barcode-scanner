@@ -32,7 +32,7 @@ npm run dev
 
 The application will open in your default web browser. Click the "Start Scan" button to begin scanning a barcode. The decoded information will be displayed in a dialog box.
 
-🚢 Docker
+## 🚢 Docker
 
 If you are planning on deploying the app to the cloud, you need a Docker image. To build the same use the `Dockerfile` provided. The multi-stage build makes sure the resulting image is smaller in size and only includes the libraries that are needed. Also, the use of non-root user makes it more secure.<br>
 
