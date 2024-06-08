@@ -51,21 +51,52 @@ const BarcodeScanner = () => {
     setIsScanning(true);
 
     try {
+      const isPhone =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        );
+
+      const videoSettings = isPhone
+        ? {
+            height: { ideal: 1080 },
+            width: { ideal: 1920 },
+            aspectRatio: undefined, // Allows video to cover the entire screen
+          }
+        : {
+            height: { ideal: 720 },
+            width: { ideal: 1280 },
+            aspectRatio: undefined, // Allows video to cover the entire screen
+          };
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: false,
         video: {
+          ...videoSettings,
           facingMode: "environment",
-          height: { min: 1280, ideal: 1920, max: 1920 },
-          width: { min: 1280, ideal: 1920, max: 1920 },
           resizeMode: false,
           focusMode: "continuous",
           focusDistance: 0,
           exposureMode: "continuous",
           zoom: 2,
-          aspectRatio: { ideal: 1 },
           frameRate: { ideal: 15, max: 30 },
         },
       });
+
+      // const stream = await navigator.mediaDevices.getUserMedia({
+      //   audio: false,
+      //   video: {
+      //     facingMode: "environment",
+      //     height: { min: 1280, ideal: 1920, max: 1920 },
+      //     width: { min: 1280, ideal: 1920, max: 1920 },
+      //     resizeMode: false,
+      //     focusMode: "continuous",
+      //     focusDistance: 0,
+      //     exposureMode: "continuous",
+      //     zoom: 2,
+      //     aspectRatio: { ideal: 1 },
+      //     frameRate: { ideal: 15, max: 30 },
+      //   },
+      // });
       videoRef.current.srcObject = stream;
 
       videoRef.current.onplay = async () => {
@@ -155,39 +186,41 @@ const BarcodeScanner = () => {
   }, []);
 
   return (
-    <div className="p-6 w-full h-dvh grid grid-cols-1 gap-6 place-items-center bg-blue-gray-50">
+    <div className="w-full h-dvh grid grid-cols-1 gap-6 place-items-center overflow-hidden bg-blue-gray-50">
       <div className="flex justify-center items-center relative">
         <img
           src="/images/ic-camera-closed.svg"
           alt="Camera Closed"
-          className="absolute z-10 p-16"
+          className="absolute -mt-32 z-10 w-[40vw] h-[40vw] md:w-[30vw] md:h-[30vw] object-cover"
         />
         <video
           ref={videoRef}
           autoPlay
           muted
           playsInline
-          className="w-[80vmin] h-[80vmin] sm:w-[720px] sm:h-[720px] rounded-lg drop-shadow-xl relative z-20"
+          className="w-screen h-screen object-cover drop-shadow-xl relative z-20"
         />
       </div>
       <canvas ref={canvasRef} hidden />
-      <Button
-        key={isScanning ? "scanning" : "not-scanning"}
-        variant="gradient"
-        color="blue-gray"
-        className="rounded-full"
-        onClick={isScanning ? handleStopScan : handleScan}
-      >
-        <img
-          src={
-            isScanning
-              ? "/images/ic-camera-closed-white.svg"
-              : "/images/ic-camera-open-white.svg"
-          }
-          alt={isScanning ? "Stop Scan" : "Start Scan"}
-          className="w-8 h-8"
-        />
-      </Button>
+      <div className="absolute bottom-8 left-1/2 flex w-[calc(100%-4rem)] -translate-x-1/2 justify-center rounded-xl border border-white bg-white/60 py-4 px-6 shadow-lg shadow-black/5 saturate-200 backdrop-blur-md z-30">
+        <Button
+          key={isScanning ? "scanning" : "not-scanning"}
+          variant="gradient"
+          color="blue-gray"
+          className="rounded-full h-14"
+          onClick={isScanning ? handleStopScan : handleScan}
+        >
+          <img
+            src={
+              isScanning
+                ? "/images/ic-camera-closed-white.svg"
+                : "/images/ic-camera-open-white.svg"
+            }
+            alt={isScanning ? "Stop Scan" : "Start Scan"}
+            className="w-8 h-8"
+          />
+        </Button>
+      </div>
       <Dialog open={showDialog} handler={handleShowDialog}>
         <DialogHeader>Result</DialogHeader>
         {data && <DialogBody>{data}</DialogBody>}
