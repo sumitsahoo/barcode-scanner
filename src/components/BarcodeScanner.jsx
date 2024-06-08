@@ -113,6 +113,7 @@ const BarcodeScanner = () => {
 
               // Handle successful scan
               setData(data);
+              window?.navigator?.vibrate?.(300); // Vibrate device on successful scan (works only on Android devices)
               audioRef.current.play(); // Play beep sound on successful scan
               setShowDialog(true);
             } else {
