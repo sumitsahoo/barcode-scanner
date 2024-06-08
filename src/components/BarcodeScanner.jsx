@@ -172,13 +172,21 @@ const BarcodeScanner = () => {
       </div>
       <canvas ref={canvasRef} hidden />
       <Button
+        key={isScanning ? "scanning" : "not-scanning"}
         variant="gradient"
         color="blue-gray"
-        className="flex items-center gap-2"
+        className="rounded-full"
         onClick={isScanning ? handleStopScan : handleScan}
       >
-        <BarcodeIcon />
-        {isScanning ? "Stop Scan" : "Start Scan"}
+        <img
+          src={
+            isScanning
+              ? "/images/ic-camera-closed-white.svg"
+              : "/images/ic-camera-open-white.svg"
+          }
+          alt={isScanning ? "Stop Scan" : "Start Scan"}
+          className="w-8 h-8"
+        />
       </Button>
       <Dialog open={showDialog} handler={handleShowDialog}>
         <DialogHeader>Result</DialogHeader>
