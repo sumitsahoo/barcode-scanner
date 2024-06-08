@@ -10,10 +10,9 @@ import {
 } from "@material-tailwind/react";
 
 import beepSound from "../assets/sound/beep.mp3"; // Import beep sound file
-import BarcodeIcon from "../icons/BarcodeIcon";
 
 const BarcodeScanner = () => {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({ typeName: "", scanData: "" });
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -116,16 +115,11 @@ const BarcodeScanner = () => {
 
               // `result` contains only alphanumeric characters and hyphens
 
-              const data = (
-                <>
-                  Barcode Type: {results[0]?.typeName}
-                  <br />
-                  Scan Data: {results[0]?.decode()}
-                </>
-              );
+              setData({
+                typeName: results[0]?.typeName,
+                scanData: results[0]?.decode(),
+              });
 
-              // Handle successful scan
-              setData(data);
               window?.navigator?.vibrate?.(300); // Vibrate device on successful scan (works only on Android devices)
               audioRef.current.play(); // Play beep sound on successful scan
               setShowDialog(true);
@@ -156,6 +150,21 @@ const BarcodeScanner = () => {
       });
       videoRef.current.srcObject = null;
     }
+  };
+
+  const handleDataCopy = () => {
+    const copyText = `Barcode Type: ${data.typeName}\nScan Data: ${data.scanData}`;
+    navigator.clipboard.writeText(copyText).then(
+      () => {
+        // Optionally, show a notification or change the button's appearance temporarily
+        console.log("Copied to clipboard successfully!");
+      },
+      (err) => {
+        console.error("Failed to copy text to clipboard", err);
+      }
+    );
+
+    setShowDialog(!showDialog);
   };
 
   useEffect(() => {
@@ -205,14 +214,31 @@ const BarcodeScanner = () => {
       </div>
       <Dialog open={showDialog} handler={handleShowDialog}>
         <DialogHeader>Result</DialogHeader>
-        {data && <DialogBody>{data}</DialogBody>}
+        {data && (
+          <DialogBody>
+            {data && (
+              <>
+                <p>Barcode Type: {data.typeName}</p>
+                <p>Scan Data: {data.scanData}</p>
+              </>
+            )}
+          </DialogBody>
+        )}
         <DialogFooter>
+          <Button
+            variant="text"
+            color="blue-gray"
+            onClick={handleDataCopy}
+            className="mr-1"
+          >
+            <span>COPY</span>
+          </Button>
           <Button
             variant="gradient"
             color="blue-gray"
             onClick={handleShowDialog}
           >
-            <span>Okay</span>
+            <span>CLOSE</span>
           </Button>
         </DialogFooter>
       </Dialog>
