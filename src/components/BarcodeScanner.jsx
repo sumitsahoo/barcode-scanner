@@ -51,10 +51,7 @@ const BarcodeScanner = () => {
     setIsScanning(true);
 
     try {
-      const isPhone =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        );
+      const isPhone = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
       const videoSettings = isPhone
         ? {
@@ -82,21 +79,6 @@ const BarcodeScanner = () => {
         },
       });
 
-      // const stream = await navigator.mediaDevices.getUserMedia({
-      //   audio: false,
-      //   video: {
-      //     facingMode: "environment",
-      //     height: { min: 1280, ideal: 1920, max: 1920 },
-      //     width: { min: 1280, ideal: 1920, max: 1920 },
-      //     resizeMode: false,
-      //     focusMode: "continuous",
-      //     focusDistance: 0,
-      //     exposureMode: "continuous",
-      //     zoom: 2,
-      //     aspectRatio: { ideal: 1 },
-      //     frameRate: { ideal: 15, max: 30 },
-      //   },
-      // });
       videoRef.current.srcObject = stream;
 
       videoRef.current.onplay = async () => {
