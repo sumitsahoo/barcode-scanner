@@ -2,6 +2,10 @@
 
 This project is a barcode scanner application built with React and ZBar WASM. It uses the device's camera to scan barcodes and display the decoded information.
 
+## 👨🏻‍💻 Demo
+
+Demo version is live at: https://sumitsahoo.github.io/barcode-scanner
+
 ## 📖 Features
 
 Real-time barcode scanning

@@ -9,8 +9,6 @@ import {
   DialogFooter,
 } from "@material-tailwind/react";
 
-import beepSound from "../assets/sound/beep.mp3"; // Import beep sound file
-
 const BarcodeScanner = () => {
   const [data, setData] = useState({ typeName: "", scanData: "" });
 
@@ -180,7 +178,7 @@ const BarcodeScanner = () => {
     <div className="w-full h-dvh grid grid-cols-1 gap-6 place-items-center overflow-hidden bg-blue-gray-50">
       <div className="flex justify-center items-center relative">
         <img
-          src="/images/ic-camera-closed.svg"
+          src={`${process.env.VITE_APP_BASE_PATH}images/ic-camera-closed.svg`}
           alt="Camera Closed"
           className="absolute -mt-32 z-10 w-[40vw] h-[40vw] md:w-[30vw] md:h-[30vw] object-cover"
         />
@@ -204,8 +202,8 @@ const BarcodeScanner = () => {
           <img
             src={
               isScanning
-                ? "/images/ic-camera-closed-white.svg"
-                : "/images/ic-camera-open-white.svg"
+                ? `${process.env.VITE_APP_BASE_PATH}images/ic-camera-closed-white.svg`
+                : `${process.env.VITE_APP_BASE_PATH}images/ic-camera-open-white.svg`
             }
             alt={isScanning ? "Stop Scan" : "Start Scan"}
             className="w-8 h-8"
@@ -242,7 +240,11 @@ const BarcodeScanner = () => {
           </Button>
         </DialogFooter>
       </Dialog>
-      <audio ref={audioRef} src={beepSound} preload="auto" />
+      <audio
+        ref={audioRef}
+        src={`${process.env.VITE_APP_BASE_PATH}sounds/beep.mp3`}
+        preload="auto"
+      />
     </div>
   );
 };
