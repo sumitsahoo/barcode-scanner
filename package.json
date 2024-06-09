@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "generate-pwa-assets": "pwa-assets-generator --preset minimal public/images/ic-logo.svg",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@heroicons/react": "^2.1.3",
