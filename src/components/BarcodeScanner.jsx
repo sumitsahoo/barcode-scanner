@@ -278,7 +278,7 @@ const BarcodeScanner = () => {
           variant="outlined"
           color="white"
           hidden={!isScanning || !isPhone()}
-          className="rounded-full h-14"
+          className="rounded-full h-14 mr-2"
           onClick={handleSwitchCamera}
         >
           <img
@@ -292,7 +292,7 @@ const BarcodeScanner = () => {
           key={isScanning ? "scanning" : "not-scanning"}
           variant="gradient"
           color="blue-gray"
-          className="rounded-full h-14 ml-2 mr-2"
+          className="rounded-full h-14"
           onClick={isScanning ? handleStopScan : handleScan}
         >
           <img
@@ -310,7 +310,7 @@ const BarcodeScanner = () => {
           variant="outlined"
           color="white"
           hidden={!isScanning || !isPhone()}
-          className="rounded-full h-14"
+          className="rounded-full h-14 ml-2"
           onClick={handleToggleTorch}
         >
           <img
