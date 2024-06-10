@@ -21,6 +21,8 @@ const BarcodeScanner = () => {
 
   const [isScanning, setIsScanning] = useState(false);
   const isScanningRef = useRef(isScanning);
+  const [facingMode, setFacingMode] = useState("environment");
+  const [isTorchOn, setIsTorchOn] = useState(false);
 
   useEffect(() => {
     isScanningRef.current = isScanning;
@@ -43,38 +45,43 @@ const BarcodeScanner = () => {
     return imageData;
   };
 
+  const isPhone = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  const getMediaConstraints = (facingMode) => {
+    const baseSettings = isPhone()
+      ? {
+          height: { ideal: 1080 },
+          width: { ideal: 1920 },
+        }
+      : {
+          height: { ideal: 720 },
+          width: { ideal: 1280 },
+        };
+
+    return {
+      audio: false,
+      video: {
+        ...baseSettings,
+        aspectRatio: undefined, // Allows video to cover the entire screen
+        facingMode: facingMode,
+        resizeMode: false,
+        focusMode: "continuous",
+        focusDistance: 0,
+        exposureMode: "continuous",
+        zoom: facingMode === "user" ? 1 : 2, // Set zoom based on facingMode
+        frameRate: { ideal: 15, max: 30 },
+      },
+    };
+  };
+
   const handleScan = async () => {
     setData(null); // Clear previous data
     setIsScanning(true);
 
     try {
-      const isPhone = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-      const videoSettings = isPhone
-        ? {
-            height: { ideal: 1080 },
-            width: { ideal: 1920 },
-            aspectRatio: undefined, // Allows video to cover the entire screen
-          }
-        : {
-            height: { ideal: 720 },
-            width: { ideal: 1280 },
-            aspectRatio: undefined, // Allows video to cover the entire screen
-          };
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: {
-          ...videoSettings,
-          facingMode: "environment",
-          resizeMode: false,
-          focusMode: "continuous",
-          focusDistance: 0,
-          exposureMode: "continuous",
-          zoom: 2,
-          frameRate: { ideal: 15, max: 30 },
-        },
-      });
+      const stream = await navigator.mediaDevices.getUserMedia(
+        getMediaConstraints(facingMode)
+      );
 
       videoRef.current.srcObject = stream;
 
@@ -159,6 +166,72 @@ const BarcodeScanner = () => {
     }
   };
 
+  const handleSwitchCamera = async () => {
+    if (!videoRef.current) {
+      console.log("Video element not found.");
+      return;
+    }
+
+    // Stop current tracks
+    videoRef.current.srcObject?.getTracks().forEach((track) => track.stop());
+
+    // Toggle the facing mode
+    const newFacingMode = facingMode === "user" ? "environment" : "user";
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia(
+        getMediaConstraints(newFacingMode)
+      );
+
+      // Update the video source and facing mode state
+      videoRef.current.srcObject = stream;
+      setFacingMode(newFacingMode); // Update the state to reflect the new facing mode
+      console.log(`Switched camera to ${newFacingMode}.`);
+    } catch (error) {
+      console.error("Error switching camera:", error);
+    }
+  };
+
+  const handleToggleTorch = async () => {
+    if (!videoRef.current) {
+      console.log("Video element not found.");
+      return;
+    }
+
+    const tracks = videoRef.current.srcObject?.getVideoTracks();
+    if (tracks && tracks.length > 0) {
+      const track = tracks[0];
+      const capabilities = track.getCapabilities();
+      const settings = track.getSettings();
+
+      // Check if flash is supported
+      if (!capabilities.torch) {
+        console.log("Flash not supported by this device.");
+        return;
+      }
+
+      try {
+        // Toggle flash
+        await track.applyConstraints({
+          advanced: [
+            {
+              fillLightMode: isTorchOn ? "flash" : "off",
+              torch: isTorchOn ? false : true,
+            },
+          ],
+        });
+        console.log(`Flash ${!isTorchOn ? "enabled" : "disabled"}.`);
+
+        // Update the isTorchOn state
+        setIsTorchOn(!isTorchOn);
+      } catch (error) {
+        console.error("Error toggling flash:", error);
+      }
+    } else {
+      console.log("No video track found.");
+    }
+  };
+
   const handleDataCopy = () => {
     const copyText = `Barcode Type: ${data.typeName}\nScan Data: ${data.scanData}`;
     navigator.clipboard.writeText(copyText).then(
@@ -184,7 +257,7 @@ const BarcodeScanner = () => {
   }, []);
 
   return (
-    <div className="w-full h-dvh grid grid-cols-1 gap-6 place-items-center overflow-hidden bg-blue-gray-50">
+    <div className="relative w-full h-dvh grid grid-cols-1 gap-6 place-items-center overflow-hidden bg-blue-gray-50">
       <div className="flex justify-center items-center relative">
         <img
           src={`${process.env.VITE_APP_BASE_PATH}images/ic-camera-closed.svg`}
@@ -200,12 +273,26 @@ const BarcodeScanner = () => {
         />
       </div>
       <canvas ref={canvasRef} hidden />
-      <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 justify-center rounded-full border border-white bg-white/30 shadow-lg shadow-black/10 saturate-200 backdrop-blur-xl z-30 p-2">
+      <div className="absolute bottom-8 flex justify-center items-center rounded-full border border-white bg-white/30 shadow-lg shadow-black/10 saturate-200 backdrop-blur-xl z-30 p-2">
+        <Button
+          variant="outlined"
+          color="white"
+          hidden={!isScanning || !isPhone()}
+          className="rounded-full h-14"
+          onClick={handleSwitchCamera}
+        >
+          <img
+            src={`${process.env.VITE_APP_BASE_PATH}images/ic-rotate-camera.svg`}
+            alt="Switch Camera"
+            className="w-8 h-8"
+          />
+        </Button>
+
         <Button
           key={isScanning ? "scanning" : "not-scanning"}
           variant="gradient"
           color="blue-gray"
-          className="rounded-full h-14"
+          className="rounded-full h-14 ml-2 mr-2"
           onClick={isScanning ? handleStopScan : handleScan}
         >
           <img
@@ -215,6 +302,24 @@ const BarcodeScanner = () => {
                 : `${process.env.VITE_APP_BASE_PATH}images/ic-camera-open-white.svg`
             }
             alt={isScanning ? "Stop Scan" : "Start Scan"}
+            className="w-8 h-8"
+          />
+        </Button>
+
+        <Button
+          variant="outlined"
+          color="white"
+          hidden={!isScanning || !isPhone()}
+          className="rounded-full h-14"
+          onClick={handleToggleTorch}
+        >
+          <img
+            src={
+              isTorchOn
+                ? `${process.env.VITE_APP_BASE_PATH}images/ic-torch-off.svg`
+                : `${process.env.VITE_APP_BASE_PATH}images/ic-torch-on.svg`
+            }
+            alt="Switch Camera"
             className="w-8 h-8"
           />
         </Button>
