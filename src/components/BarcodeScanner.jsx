@@ -200,7 +200,7 @@ const BarcodeScanner = () => {
         />
       </div>
       <canvas ref={canvasRef} hidden />
-      <div className="absolute bottom-8 left-1/2 flex w-[calc(100%-4rem)] -translate-x-1/2 justify-center rounded-xl border border-white bg-white/60 py-4 px-6 shadow-lg shadow-black/5 saturate-200 backdrop-blur-md z-30">
+      <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 justify-center rounded-full border border-white bg-white/30 shadow-lg shadow-black/10 saturate-200 backdrop-blur-xl z-30 p-2">
         <Button
           key={isScanning ? "scanning" : "not-scanning"}
           variant="gradient"
