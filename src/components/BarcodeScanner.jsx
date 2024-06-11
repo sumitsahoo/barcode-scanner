@@ -45,7 +45,7 @@ const BarcodeScanner = () => {
     return imageData;
   };
 
-  const isPhone = () => !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isPhone = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   const getMediaConstraints = (facingMode) => {
     const baseSettings = isPhone()
