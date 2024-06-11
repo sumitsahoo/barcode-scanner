@@ -45,7 +45,7 @@ const BarcodeScanner = () => {
     return imageData;
   };
 
-  const isPhone = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isPhone = () => !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   const getMediaConstraints = (facingMode) => {
     const baseSettings = isPhone()
@@ -277,14 +277,15 @@ const BarcodeScanner = () => {
         <Button
           variant="outlined"
           color="white"
-          hidden={!isScanning || !isPhone()}
-          className="rounded-full h-14 mr-2"
+          className={`rounded-full h-10 mr-2 flex items-center ${
+            !isScanning || !isPhone() ? "hidden" : ""
+          }`}
           onClick={handleSwitchCamera}
         >
           <img
             src={`${process.env.VITE_APP_BASE_PATH}images/ic-rotate-camera.svg`}
             alt="Switch Camera"
-            className="w-8 h-8"
+            className="w-6 h-6"
           />
         </Button>
 
@@ -292,7 +293,7 @@ const BarcodeScanner = () => {
           key={isScanning ? "scanning" : "not-scanning"}
           variant="gradient"
           color="blue-gray"
-          className="rounded-full h-14"
+          className="rounded-full h-14 flex items-center"
           onClick={isScanning ? handleStopScan : handleScan}
         >
           <img
@@ -309,8 +310,9 @@ const BarcodeScanner = () => {
         <Button
           variant="outlined"
           color="white"
-          hidden={!isScanning || !isPhone()}
-          className="rounded-full h-14 ml-2"
+          className={`rounded-full h-10 ml-2 flex items-center ${
+            !isScanning || !isPhone() ? "hidden" : ""
+          }`}
           onClick={handleToggleTorch}
         >
           <img
@@ -320,7 +322,7 @@ const BarcodeScanner = () => {
                 : `${process.env.VITE_APP_BASE_PATH}images/ic-torch-on.svg`
             }
             alt="Switch Camera"
-            className="w-8 h-8"
+            className="w-6 h-6"
           />
         </Button>
       </div>
