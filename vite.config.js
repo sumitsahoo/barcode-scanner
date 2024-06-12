@@ -19,6 +19,8 @@ export default defineConfig(async ({ command, mode }) => {
       short_name: "Barcode Scanner",
       theme_color: "#78909C",
       background_color: "#ffffff",
+      display: "standalone",
+      orientation: "portrait",
       icons: [
         {
           src: "images/pwa-64x64.png",
