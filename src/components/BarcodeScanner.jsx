@@ -120,8 +120,12 @@ const BarcodeScanner = () => {
             // Numerical digits (0-9)
             // Hyphens (-)
             // Spaces ( )
+            // URLs (http://example.com)
 
-            const isValid = /^[a-zA-Z0-9- ]*$/.test(result);
+            const isValid =
+              /^[a-zA-Z0-9- ]*(https?:\/\/[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\/[a-zA-Z0-9-._~:?#[\]@!$&'()*+,;=]*)?)?$/.test(
+                result
+              );
 
             if (isValid) {
               setIsScanning(false);
@@ -130,7 +134,7 @@ const BarcodeScanner = () => {
               // `result` contains only alphanumeric characters and hyphens
 
               setData({
-                typeName: results[0]?.typeName,
+                typeName: results[0]?.typeName.replace("ZBAR_", ""),
                 scanData: results[0]?.decode(),
               });
 
@@ -233,10 +237,10 @@ const BarcodeScanner = () => {
   };
 
   const handleDataCopy = () => {
-    const copyText = `Barcode Type: ${data.typeName}\nScan Data: ${data.scanData}`;
+    const copyText = `${data.scanData}`;
     navigator.clipboard.writeText(copyText).then(
       () => {
-        // Optionally, show a notification or change the button's appearance temporarily
+        // Optionally, show a notification or alert that the text was copied.
         console.log("Copied to clipboard successfully!");
       },
       (err) => {
@@ -326,36 +330,34 @@ const BarcodeScanner = () => {
           />
         </Button>
       </div>
-      <Dialog open={showDialog} handler={handleShowDialog}>
-        <DialogHeader>Result</DialogHeader>
-        {data && (
+
+      {data && (
+        <Dialog open={showDialog} handler={handleShowDialog}>
+          <DialogHeader>{data.typeName}</DialogHeader>
+
           <DialogBody>
-            {data && (
-              <>
-                <p>Barcode Type: {data.typeName}</p>
-                <p>Scan Data: {data.scanData}</p>
-              </>
-            )}
+            <p>{data.scanData}</p>
           </DialogBody>
-        )}
-        <DialogFooter>
-          <Button
-            variant="text"
-            color="blue-gray"
-            onClick={handleDataCopy}
-            className="mr-1"
-          >
-            <span>COPY</span>
-          </Button>
-          <Button
-            variant="gradient"
-            color="blue-gray"
-            onClick={handleShowDialog}
-          >
-            <span>CLOSE</span>
-          </Button>
-        </DialogFooter>
-      </Dialog>
+
+          <DialogFooter>
+            <Button
+              variant="text"
+              color="blue-gray"
+              onClick={handleDataCopy}
+              className="mr-1"
+            >
+              <span>COPY</span>
+            </Button>
+            <Button
+              variant="gradient"
+              color="blue-gray"
+              onClick={handleShowDialog}
+            >
+              <span>CLOSE</span>
+            </Button>
+          </DialogFooter>
+        </Dialog>
+      )}
       <audio
         ref={audioRef}
         src={`${process.env.VITE_APP_BASE_PATH}sounds/beep.mp3`}
