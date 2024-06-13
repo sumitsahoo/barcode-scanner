@@ -112,40 +112,18 @@ const BarcodeScanner = () => {
           const results = await scanImageData(grayscaleImageData);
 
           if (results && results.length > 0) {
-            const result = results[0]?.decode();
+            // Stop scanning and show the result
+            setIsScanning(false);
+            handleStopScan();
 
-            // Remove this check if you want to detect all special characters
-            // Allowed values:
-            // Lowercase letters (a-z)
-            // Uppercase letters (A-Z)
-            // Numerical digits (0-9)
-            // Hyphens (-)
-            // Spaces ( )
-            // URLs (http://example.com)
+            setData({
+              typeName: results[0]?.typeName.replace("ZBAR_", ""),
+              scanData: results[0]?.decode(),
+            });
 
-            const isValid =
-              /^[a-zA-Z0-9- ]*(https?:\/\/[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\/[a-zA-Z0-9-._~:?#[\]@!$&'()*+,;=]*)?)?$/.test(
-                result
-              );
-
-            if (isValid) {
-              setIsScanning(false);
-              handleStopScan();
-
-              // `result` contains only alphanumeric characters and hyphens
-
-              setData({
-                typeName: results[0]?.typeName.replace("ZBAR_", ""),
-                scanData: results[0]?.decode(),
-              });
-
-              window?.navigator?.vibrate?.(300); // Vibrate device on successful scan (works only on Android devices)
-              audioRef.current.play(); // Play beep sound on successful scan
-              setShowDialog(true);
-            } else {
-              // `result` contains other characters
-              requestAnimationFrame(tick); // Continue scanning
-            }
+            window?.navigator?.vibrate?.(300); // Vibrate device on successful scan (works only on Android devices)
+            audioRef.current.play(); // Play beep sound on successful scan
+            setShowDialog(true);
           } else {
             requestAnimationFrame(tick); // Continue scanning
           }
