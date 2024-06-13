@@ -3,6 +3,7 @@ import { scanImageData } from "@undecaf/zbar-wasm";
 
 import {
   Button,
+  IconButton,
   Dialog,
   DialogHeader,
   DialogBody,
@@ -278,26 +279,28 @@ const BarcodeScanner = () => {
       </div>
       <canvas ref={canvasRef} hidden />
       <div className="absolute bottom-8 flex justify-center items-center rounded-full border border-white bg-white/30 shadow-lg shadow-black/10 saturate-200 backdrop-blur-xl z-30 p-2">
-        <Button
+        <IconButton
           variant="outlined"
           color="white"
-          className={`rounded-full h-10 mr-2 flex items-center ${
+          className={`rounded-full mr-2 ${
             !isScanning || !isPhone() ? "hidden" : ""
           }`}
+          size="md"
           onClick={handleSwitchCamera}
         >
           <img
             src={`${process.env.VITE_APP_BASE_PATH}images/ic-rotate-camera.svg`}
             alt="Switch Camera"
-            className="w-6 h-6"
+            className="w-8 h-8"
           />
-        </Button>
+        </IconButton>
 
-        <Button
+        <IconButton
           key={isScanning ? "scanning" : "not-scanning"}
           variant="gradient"
           color="blue-gray"
-          className="rounded-full h-14 flex items-center"
+          className="rounded-full"
+          size="lg"
           onClick={isScanning ? handleStopScan : handleScan}
         >
           <img
@@ -309,14 +312,15 @@ const BarcodeScanner = () => {
             alt={isScanning ? "Stop Scan" : "Start Scan"}
             className="w-8 h-8"
           />
-        </Button>
+        </IconButton>
 
-        <Button
+        <IconButton
           variant="outlined"
           color="white"
-          className={`rounded-full h-10 ml-2 flex items-center ${
+          className={`rounded-full ml-2 ${
             !isScanning || !isPhone() ? "hidden" : ""
           }`}
+          size="md"
           onClick={handleToggleTorch}
         >
           <img
@@ -326,9 +330,9 @@ const BarcodeScanner = () => {
                 : `${process.env.VITE_APP_BASE_PATH}images/ic-torch-on.svg`
             }
             alt="Switch Camera"
-            className="w-6 h-6"
+            className="w-8 h-8"
           />
-        </Button>
+        </IconButton>
       </div>
 
       {data && (
