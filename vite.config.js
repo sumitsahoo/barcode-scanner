@@ -16,11 +16,15 @@ export default defineConfig(async ({ command, mode }) => {
       id: env.VITE_APP_BASE_PATH,
       start_url: env.VITE_APP_BASE_PATH, // Dynamically set start_url
       name: "Barcode Scanner",
+      description:
+        "A fast and efficient barcode scanner app designed for all devices.",
       short_name: "Barcode Scanner",
       theme_color: "#78909C",
-      background_color: "#ffffff",
+      background_color: "#78909c",
       display: "standalone",
       orientation: "portrait",
+      categories: ["productivity", "utilities"],
+      dir: "ltr",
       icons: [
         {
           src: "images/pwa-64x64.png",
