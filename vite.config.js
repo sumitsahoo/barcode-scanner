@@ -52,7 +52,7 @@ export default defineConfig(async ({ command, mode }) => {
       screenshots: [
         // iPhone 15 Pro (1290 × 2796)
         {
-          src: "screenshots/screenshot-1290x2796",
+          src: "screenshots/screenshot-1290x2796.png",
           sizes: "1290x2796",
           type: "image/png",
           form_factor: "narrow",
@@ -60,7 +60,7 @@ export default defineConfig(async ({ command, mode }) => {
         },
         // Samsung S24 Ultra (1442 × 3202)
         {
-          src: "screenshots/screenshot-1442x3202",
+          src: "screenshots/screenshot-1442x3202.png",
           sizes: "1290x2796",
           type: "image/png",
           form_factor: "narrow",
