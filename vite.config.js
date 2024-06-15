@@ -49,6 +49,24 @@ export default defineConfig(async ({ command, mode }) => {
           purpose: "maskable",
         },
       ],
+      screenshots: [
+        // iPhone 15 Pro (1290 × 2796)
+        {
+          src: "screenshots/screenshot-1290x2796",
+          sizes: "1290x2796",
+          type: "image/png",
+          form_factor: "narrow",
+          label: "Barcode Scanner App on iPhone 15 Pro",
+        },
+        // Samsung S24 Ultra (1442 × 3202)
+        {
+          src: "screenshots/screenshot-1442x3202",
+          sizes: "1290x2796",
+          type: "image/png",
+          form_factor: "narrow",
+          label: "Barcode Scanner App on Samsung S24 Ultra",
+        },
+      ],
     },
   };
   return {
