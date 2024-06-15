@@ -50,6 +50,7 @@ export default defineConfig(async ({ command, mode }) => {
         },
       ],
       screenshots: [
+        // Screenshots taken from Chrome Dev Tools. Actual resolution may vary.
         // iPhone 15 Pro (1290 × 2796)
         {
           src: "screenshots/screenshot-1290x2796.png",
