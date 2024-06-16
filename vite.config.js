@@ -22,6 +22,7 @@ export default defineConfig(async ({ command, mode }) => {
       theme_color: "#78909C",
       background_color: "#78909c",
       display: "standalone",
+      display_override: ["standalone"],
       orientation: "portrait",
       categories: ["productivity", "utilities"],
       dir: "ltr",
