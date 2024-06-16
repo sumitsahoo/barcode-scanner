@@ -22,6 +22,7 @@ export default defineConfig(async ({ command, mode }) => {
       theme_color: "#78909C",
       background_color: "#78909c",
       display: "standalone",
+      display_override: ["standalone"],
       orientation: "portrait",
       categories: ["productivity", "utilities"],
       dir: "ltr",
@@ -50,6 +51,7 @@ export default defineConfig(async ({ command, mode }) => {
         },
       ],
       screenshots: [
+        // Screenshots taken from Chrome Dev Tools. Actual resolution may vary.
         // iPhone 15 Pro (1290 × 2796)
         {
           src: "screenshots/screenshot-1290x2796.png",
@@ -58,13 +60,13 @@ export default defineConfig(async ({ command, mode }) => {
           form_factor: "narrow",
           label: "Barcode Scanner App on iPhone 15 Pro",
         },
-        // Samsung S24 Ultra (1442 × 3202)
+        // iPad Pro Landscape (2732x2048)
         {
-          src: "screenshots/screenshot-1442x3202.png",
-          sizes: "1290x2796",
+          src: "screenshots/screenshot-2732x2048.png",
+          sizes: "2732x2048",
           type: "image/png",
-          form_factor: "narrow",
-          label: "Barcode Scanner App on Samsung S24 Ultra",
+          form_factor: "wide",
+          label: "Barcode Scanner App on iPad Pro Landscape",
         },
       ],
     },
