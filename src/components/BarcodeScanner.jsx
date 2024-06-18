@@ -142,6 +142,7 @@ const BarcodeScanner = () => {
     if (videoRef.current?.srcObject) {
       const tracks = videoRef.current.srcObject.getTracks();
       console.log("Stopping tracks:", tracks);
+      // biome-ignore lint/complexity/noForEach: List is not too long
       tracks.forEach((track) => {
         track.stop();
       });
@@ -156,6 +157,7 @@ const BarcodeScanner = () => {
     }
 
     // Stop current tracks
+    // biome-ignore lint/complexity/noForEach: List is not too long
     videoRef.current.srcObject?.getTracks().forEach((track) => track.stop());
 
     // Toggle the facing mode
@@ -234,6 +236,7 @@ const BarcodeScanner = () => {
     // Cleanup function to release resources
     return () => {
       if (videoRef.current?.srcObject) {
+        // biome-ignore lint/complexity/noForEach: List is not too long
         videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
       }
     };
@@ -341,6 +344,7 @@ const BarcodeScanner = () => {
           </DialogFooter>
         </Dialog>
       )}
+      {/* biome-ignore lint/a11y/useMediaCaption: This is only for beep sound */}
       <audio
         title="Beep Sound"
         ref={audioRef}
