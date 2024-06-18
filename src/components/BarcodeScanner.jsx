@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
 import { scanImageData } from "@undecaf/zbar-wasm";
+import { useEffect, useRef, useState } from "react";
 
 import {
   Button,
-  IconButton,
   Dialog,
-  DialogHeader,
   DialogBody,
   DialogFooter,
+  DialogHeader,
+  IconButton,
 } from "@material-tailwind/react";
 
 const BarcodeScanner = () => {
@@ -81,7 +81,7 @@ const BarcodeScanner = () => {
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia(
-        getMediaConstraints(facingMode)
+        getMediaConstraints(facingMode),
       );
 
       videoRef.current.srcObject = stream;
@@ -139,9 +139,10 @@ const BarcodeScanner = () => {
   const handleStopScan = () => {
     console.log("Stopping scan...");
     setIsScanning(false);
-    if (videoRef.current && videoRef.current.srcObject) {
-      let tracks = videoRef.current.srcObject.getTracks();
+    if (videoRef.current?.srcObject) {
+      const tracks = videoRef.current.srcObject.getTracks();
       console.log("Stopping tracks:", tracks);
+      // biome-ignore lint/complexity/noForEach: List is not too long
       tracks.forEach((track) => {
         track.stop();
       });
@@ -156,6 +157,7 @@ const BarcodeScanner = () => {
     }
 
     // Stop current tracks
+    // biome-ignore lint/complexity/noForEach: List is not too long
     videoRef.current.srcObject?.getTracks().forEach((track) => track.stop());
 
     // Toggle the facing mode
@@ -163,7 +165,7 @@ const BarcodeScanner = () => {
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia(
-        getMediaConstraints(newFacingMode)
+        getMediaConstraints(newFacingMode),
       );
 
       // Update the video source and facing mode state
@@ -185,7 +187,7 @@ const BarcodeScanner = () => {
     if (tracks && tracks.length > 0) {
       const track = tracks[0];
       const capabilities = track.getCapabilities();
-      const settings = track.getSettings();
+      // const settings = track.getSettings();
 
       // Check if flash is supported
       if (!capabilities.torch) {
@@ -199,7 +201,7 @@ const BarcodeScanner = () => {
           advanced: [
             {
               fillLightMode: isTorchOn ? "flash" : "off",
-              torch: isTorchOn ? false : true,
+              torch: !isTorchOn,
             },
           ],
         });
@@ -224,7 +226,7 @@ const BarcodeScanner = () => {
       },
       (err) => {
         console.error("Failed to copy text to clipboard", err);
-      }
+      },
     );
 
     setShowDialog(!showDialog);
@@ -233,7 +235,8 @@ const BarcodeScanner = () => {
   useEffect(() => {
     // Cleanup function to release resources
     return () => {
-      if (videoRef.current && videoRef.current.srcObject) {
+      if (videoRef.current?.srcObject) {
+        // biome-ignore lint/complexity/noForEach: List is not too long
         videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
       }
     };
@@ -248,6 +251,7 @@ const BarcodeScanner = () => {
           className="absolute -mt-32 z-10 w-[40vw] h-[40vw] md:w-[30vw] md:h-[30vw] object-cover"
         />
         <video
+          title="Barcode Scanner"
           ref={videoRef}
           autoPlay
           muted
@@ -340,7 +344,9 @@ const BarcodeScanner = () => {
           </DialogFooter>
         </Dialog>
       )}
+      {/* biome-ignore lint/a11y/useMediaCaption: This is only for beep sound */}
       <audio
+        title="Beep Sound"
         ref={audioRef}
         src={`${process.env.VITE_APP_BASE_PATH}sounds/beep.mp3`}
         preload="auto"
