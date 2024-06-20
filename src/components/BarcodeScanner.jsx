@@ -29,6 +29,8 @@ const BarcodeScanner = () => {
     isScanningRef.current = isScanning;
   }, [isScanning]);
 
+  const isPhone = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
   const handleError = (error) => {
     console.error("Error:", error);
     setIsScanning(false);
@@ -46,9 +48,7 @@ const BarcodeScanner = () => {
     return imageData;
   };
 
-  const isPhone = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-  const getMediaConstraints = (facingMode) => {
+  const getMediaConstraints = async (facingMode) => {
     const baseSettings = isPhone()
       ? {
           height: { ideal: 1080 },
@@ -59,7 +59,8 @@ const BarcodeScanner = () => {
           width: { ideal: 1280 },
         };
 
-    return {
+    // biome-ignore lint/style/useConst: <explanation>
+    let customConstraints = {
       audio: false,
       video: {
         ...baseSettings,
@@ -73,6 +74,107 @@ const BarcodeScanner = () => {
         frameRate: { ideal: 15, max: 30 },
       },
     };
+
+    if (facingMode === "environment" && isPhone()) {
+      const cameraId = await getAndSetCameraIdWithFlash();
+      if (cameraId) {
+        customConstraints.video.deviceId = cameraId;
+      }
+    }
+
+    return customConstraints;
+  };
+
+  const getCameraIdWithFlash = async () => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    for (const device of devices) {
+      const constraints = {
+        video: {
+          deviceId: device.deviceId,
+          facingMode: "environment", // Prefer the rear camera
+        },
+      };
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const videoTrack = stream.getVideoTracks()[0];
+        const capabilities = videoTrack.getCapabilities();
+
+        // Check if the torch (flash) capability is supported
+        if (capabilities.torch) {
+          console.log(`Device ${device.deviceId} supports torch.`);
+          // biome-ignore lint/complexity/noForEach: List is not too long
+          stream.getTracks().forEach((track) => track.stop()); // Stop using the camera
+          return device.deviceId; // Return the ID of the camera that supports flash
+        }
+
+        // Stop using the camera
+        // biome-ignore lint/complexity/noForEach: List is not too long
+        stream.getTracks().forEach((track) => track.stop());
+      } catch (error) {
+        console.error(`Error with device ${device.deviceId}:`, error);
+      }
+    }
+
+    return null; // Return null if no camera with flash support is found
+  };
+
+  const getHighestResolutionCameraId = async () => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(
+      (device) => device.kind === "videoinput",
+    );
+
+    let highestResolution = 0;
+    let highestResolutionCameraId = null;
+
+    for (const device of videoDevices) {
+      const constraints = {
+        video: {
+          deviceId: device.deviceId,
+          facingMode: "environment", // Prefer the rear camera
+        },
+      };
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const videoTrack = stream.getVideoTracks()[0];
+        const capabilities = videoTrack.getCapabilities();
+
+        console.log(`Device ${device.deviceId} capabilities:`);
+        console.log(capabilities);
+
+        // Assuming capabilities include width and height
+        const maxResolution = capabilities.width.max * capabilities.height.max;
+
+        if (maxResolution > highestResolution) {
+          highestResolution = maxResolution;
+          highestResolutionCameraId = device.deviceId;
+        }
+
+        // Stop using the camera
+        // biome-ignore lint/complexity/noForEach: List is not too long
+        stream.getTracks().forEach((track) => track.stop());
+      } catch (error) {
+        console.error(`Error with device ${device.deviceId}:`, error);
+      }
+    }
+
+    return highestResolutionCameraId;
+  };
+
+  const getAndSetCameraIdWithFlash = async () => {
+    let cameraId = localStorage.getItem("cameraIdWithFlash");
+
+    // If no valid cameraId is stored, find one and store it
+    if (!cameraId) {
+      cameraId = await getCameraIdWithFlash();
+      if (cameraId) {
+        localStorage.setItem("cameraIdWithFlash", cameraId);
+      }
+    }
+
+    return cameraId;
   };
 
   const handleScan = async () => {
@@ -80,9 +182,10 @@ const BarcodeScanner = () => {
     setIsScanning(true);
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia(
-        getMediaConstraints(facingMode),
-      );
+      const mediaConstraints = await getMediaConstraints(facingMode);
+
+      const stream =
+        await navigator.mediaDevices.getUserMedia(mediaConstraints);
 
       videoRef.current.srcObject = stream;
 
@@ -164,9 +267,9 @@ const BarcodeScanner = () => {
     const newFacingMode = facingMode === "user" ? "environment" : "user";
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia(
-        getMediaConstraints(newFacingMode),
-      );
+      const mediaConstraints = await getMediaConstraints(newFacingMode);
+      const stream =
+        await navigator.mediaDevices.getUserMedia(mediaConstraints);
 
       // Update the video source and facing mode state
       videoRef.current.srcObject = stream;
@@ -300,7 +403,9 @@ const BarcodeScanner = () => {
           variant="outlined"
           color="white"
           className={`rounded-full ml-2 ${
-            !isScanning || !isPhone() ? "hidden" : ""
+            !isScanning || !isPhone() || facingMode !== "environment"
+              ? "hidden"
+              : ""
           }`}
           size="md"
           onClick={handleToggleTorch}

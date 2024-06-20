@@ -1,4 +1,3 @@
-
 import BarcodeScanner from "./components/BarcodeScanner";
 
 function App() {
