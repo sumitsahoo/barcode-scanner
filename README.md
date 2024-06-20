@@ -71,6 +71,8 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 1. <a href="https://github.com/undecaf/zbar-wasm" title="zbar wasm">ZBar WASM library for barcode detection</a><br>
 2. <a href="https://www.svgrepo.com/" title="svg icons">Icons from SVG Repo</a>
+3. <a href="https://pixabay.com/sound-effects/search/beep/" title="beep sound">Beep sound from Pixabay</a>
+
 
 ## 📜 License
 
