@@ -85,6 +85,8 @@ const BarcodeScanner = () => {
     return customConstraints;
   };
 
+  // Usually the camera with flash is the main rear camera
+
   const getCameraIdWithFlash = async () => {
     const devices = await navigator.mediaDevices.enumerateDevices();
     for (const device of devices) {
@@ -119,7 +121,7 @@ const BarcodeScanner = () => {
     return null; // Return null if no camera with flash support is found
   };
 
-  const getHighestResolutionCameraId = async () => {
+  const _getHighestResolutionCameraId = async () => {
     const devices = await navigator.mediaDevices.enumerateDevices();
     const videoDevices = devices.filter(
       (device) => device.kind === "videoinput",
