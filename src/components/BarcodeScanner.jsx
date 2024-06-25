@@ -348,7 +348,7 @@ const BarcodeScanner = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-dvh grid grid-cols-1 gap-6 place-items-center overflow-hidden">
+    <div className="relative w-full h-dvh grid grid-cols-1 gap-6 place-items-center overflow-hidden backdrop-blur-sm">
       <div className="flex justify-center items-center relative">
         <img
           src={`${process.env.VITE_APP_BASE_PATH}images/ic-camera-closed.svg`}
