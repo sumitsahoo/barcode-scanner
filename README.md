@@ -1,10 +1,20 @@
 ## ℹ️ Barcode Scanner with ZBar WASM
 
-This project is a barcode scanner application built with React and ZBar WASM. It uses the device's camera to scan barcodes and display the decoded information.
+This project is a barcode scanner application built with React and ZBar WASM. It uses the device's camera to scan barcode and display the decoded information.
 
 ## 👨🏻‍💻 Live App
 
 You can try the live version on GitHub pages here: https://sumitsahoo.github.io/barcode-scanner
+
+## 📖 Features
+
+1. PWA app can be installed on any device (on supported browsers)
+2. Real-time barcode scanning
+3. Start and stop scanning functionality
+4. Switch between front and back camera in phones and tablets
+5. Toggle flash for night time scanning
+6. Display of scanning result in a dialog box with copy option
+7. Haptic feedback (Android) on successful scan
 
 ## 📷 Screenshots
 
@@ -16,13 +26,6 @@ You can try the live version on GitHub pages here: https://sumitsahoo.github.io/
 
 ![iPad](public/screenshots/screenshot-2732x2048.png "App running on iPad Pro")
 
-## 📖 Features
-
-1. Real-time barcode scanning
-2. Start and stop scanning functionality
-3. Switch between front and back camera in phones and tablets
-4. Toggle flash for night time scanning
-5. Display of scanning results in a dialog box with copy option
 
 ## 📦 Local Installation
 
