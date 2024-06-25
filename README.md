@@ -6,6 +6,16 @@ This project is a barcode scanner application built with React and ZBar WASM. It
 
 You can try the live version on GitHub pages here: https://sumitsahoo.github.io/barcode-scanner
 
+## 📷 Screenshots
+
+### App running on iPhone
+
+![iPhone](public/screenshots/screenshot-1290x2796.png "App running on iPhone 15 Pro")
+
+### App running on iPad
+
+![iPad](public/screenshots/screenshot-2732x2048.png "App running on iPad Pro")
+
 ## 📖 Features
 
 1. Real-time barcode scanning
