@@ -55,16 +55,16 @@ The application will open in your default web browser. Click the "Camera" button
 
 If you are planning on deploying the app to the cloud, you need a Docker image. To build the same use the `Dockerfile` provided. The multi-stage build makes sure the resulting image is smaller in size and only includes the libraries that are needed. Also, the use of non-root user makes it more secure.<br>
 
-Build arm64 (Apple Silicon & ARM) image (Make sure cloud deployment supports arm64 images):
+Build device default architecture image (arm64 for Apple Silicon SoC & amd64 for Windows/Linux with Intel/AMD SoC):
 
 ```bash
 docker build --no-cache -t barcode-scanner .
 ```
 
-For amd64 (Intel & AMD) image (most common and widely supported):
+For amd64 (Intel & AMD) image (most common and widely supported by cloud):
 
 ```bash
-docker buildx build --no-cache --platform linux/amd64 -t barcode-scanner .
+docker build --no-cache --platform linux/amd64 -t barcode-scanner .
 ```
 
 Once the image is built, you can push the same to any cloud provider and use a serverless service to deploy the same easily.
