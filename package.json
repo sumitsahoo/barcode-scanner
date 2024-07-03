@@ -19,11 +19,11 @@
     "@heroicons/react": "^2.1.4",
     "@material-tailwind/react": "^2.1.9",
     "@tsparticles/react": "^3.0.0",
-    "@tsparticles/slim": "^3.4.0",
+    "@tsparticles/slim": "^3.5.0",
     "@undecaf/zbar-wasm": "^0.11.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tsparticles": "^3.4.0"
+    "tsparticles": "^3.5.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
@@ -33,9 +33,9 @@
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
     "gh-pages": "^6.1.1",
-    "postcss": "^8.4.38",
+    "postcss": "^8.4.39",
     "tailwindcss": "^3.4.4",
-    "vite": "^5.3.2",
+    "vite": "^5.3.3",
     "vite-plugin-pwa": "^0.20.0"
   }
 }
