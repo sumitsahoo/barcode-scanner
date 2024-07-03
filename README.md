@@ -16,6 +16,10 @@ You can try the live version on GitHub pages here: https://sumitsahoo.github.io/
 6. Display of scanning result in a dialog box with copy option
 7. Haptic feedback (Android) on successful scan
 
+## 🧐 Why this is not a library?
+
+In many scenarios, the user interface (UI) requirements for scanner implementations vary significantly. This diversity in UI needs makes it impractical to encapsulate such functionality within a library, as it would severely limit the ability to customize the UI to meet specific requirements.
+
 ## 📷 Screenshots
 
 ### App running on iPhone
