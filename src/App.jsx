@@ -5,6 +5,10 @@ import BarcodeScanner from "./components/BarcodeScanner";
 
 const App = () => {
   const [_init, setInit] = useState(false);
+
+  const backgroundColor = "#ECEFF1";
+  const particlesColor = "#78909C";
+
   // this should be run only once per application lifetime
   useEffect(() => {
     initParticlesEngine(async (engine) => {
@@ -13,8 +17,9 @@ const App = () => {
       // starting from v2 you can add only the features you need reducing the bundle size
       //await loadAll(engine);
       //await loadFull(engine);
-      await loadSlim(engine);
       //await loadBasic(engine);
+
+      await loadSlim(engine);
     }).then(() => {
       setInit(true);
     });
@@ -26,7 +31,7 @@ const App = () => {
 
   const options = {
     background: {
-      color: "#eceff1",
+      color: backgroundColor,
     },
     particles: {
       number: {
@@ -37,7 +42,7 @@ const App = () => {
         },
       },
       color: {
-        value: ["#78909C"],
+        value: [particlesColor],
       },
       shape: {
         type: "circle",
@@ -51,7 +56,7 @@ const App = () => {
       links: {
         enable: true,
         distance: 150,
-        color: "#78909C",
+        color: particlesColor,
         opacity: 0.4,
         width: 1,
       },
@@ -71,7 +76,7 @@ const App = () => {
           mode: "grab",
         },
         onClick: {
-          enable: true,
+          enable: false,
           mode: "push",
         },
       },
