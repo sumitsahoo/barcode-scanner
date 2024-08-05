@@ -365,6 +365,15 @@ const BarcodeScanner = () => {
         />
       </div>
       <canvas ref={canvasRef} hidden />
+      {isScanning && (
+        <div
+          className="absolute w-[70%] h-1 bg-red-500 bg-opacity-70 z-40 animate-scan"
+          style={{
+            top: 0,
+            left: "15%",
+          }}
+        />
+      )}
       <div className="absolute bottom-8 flex justify-center items-center rounded-full border border-white bg-white/30 shadow-lg shadow-black/10 saturate-200 backdrop-blur-xl z-30 p-2">
         <IconButton
           variant="outlined"
