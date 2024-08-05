@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  @keyframes scan {
+    0%, 100% {
+      top: 20%;
+    }
+    50% {
+      top: 80%;
+    }
+  }
+  .animate-scan {
+    animation: scan 4s infinite;
+  }
+}
