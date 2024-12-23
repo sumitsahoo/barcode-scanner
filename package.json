@@ -2,7 +2,7 @@
   "name": "barcode-scanner",
   "author": "Sumit Sahoo",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "homepage": "https://sumitsahoo.github.io/barcode-scanner",
   "scripts": {
@@ -16,26 +16,26 @@
     "generate-pwa-assets": "pwa-assets-generator --preset minimal public/images/ic-logo.svg"
   },
   "dependencies": {
-    "@heroicons/react": "^2.1.5",
+    "@heroicons/react": "^2.2.0",
     "@material-tailwind/react": "^2.1.10",
     "@tsparticles/react": "^3.0.0",
-    "@tsparticles/slim": "^3.5.0",
+    "@tsparticles/slim": "^3.7.1",
     "@undecaf/zbar-wasm": "^0.11.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "tsparticles": "^3.5.0"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tsparticles": "^3.7.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
     "@vite-pwa/assets-generator": "^0.2.6",
-    "@vitejs/plugin-react": "^4.3.3",
+    "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "gh-pages": "^6.2.0",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.14",
-    "vite": "^5.4.10",
-    "vite-plugin-pwa": "^0.20.5"
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.0.5",
+    "vite-plugin-pwa": "^0.21.1"
   }
 }
