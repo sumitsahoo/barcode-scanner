@@ -1,4 +1,4 @@
-FROM node:22-alpine as build
+FROM node:23-alpine as build
 
 ARG WORK_DIR=/app
 ENV PATH $WORK_DIR/node_modules/.bin:$PATH
@@ -10,7 +10,7 @@ RUN mkdir node_modules/.cache && chmod -R 777 node_modules/.cache
 
 RUN npm run build
 
-FROM nginx:1.27.0-alpine
+FROM nginx:1.27-alpine
 EXPOSE 8080
 
 USER root
