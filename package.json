@@ -19,23 +19,23 @@
     "@heroicons/react": "^2.2.0",
     "@material-tailwind/react": "^2.1.10",
     "@tsparticles/react": "^3.0.0",
-    "@tsparticles/slim": "^3.7.1",
+    "@tsparticles/slim": "^3.8.1",
     "@undecaf/zbar-wasm": "^0.11.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tsparticles": "^3.7.1"
+    "tsparticles": "^3.8.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@types/react": "^19.0.2",
-    "@types/react-dom": "^19.0.2",
+    "@tailwindcss/postcss": "^4.0.13",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
     "@vite-pwa/assets-generator": "^0.2.6",
     "@vitejs/plugin-react": "^4.3.4",
-    "autoprefixer": "^10.4.20",
-    "gh-pages": "^6.2.0",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.17",
-    "vite": "^6.0.5",
+    "gh-pages": "^6.3.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.13",
+    "vite": "^6.2.1",
     "vite-plugin-pwa": "^0.21.1"
   }
 }
