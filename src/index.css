@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @config '../tailwind.config.js';
 
@@ -26,7 +26,8 @@
 
 @layer utilities {
   @keyframes scan {
-    0%, 100% {
+    0%,
+    100% {
       top: 20%;
     }
     50% {
