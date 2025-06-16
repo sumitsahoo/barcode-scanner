@@ -1,5 +1,8 @@
 import { scanImageData } from "@undecaf/zbar-wasm";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+// Memoize isPhone outside the component to avoid recreation
+const isPhone = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 const BarcodeScanner = () => {
   const [data, setData] = useState({ typeName: "", scanData: "" });
@@ -15,13 +18,11 @@ const BarcodeScanner = () => {
   const isScanningRef = useRef(isScanning);
   const [facingMode, setFacingMode] = useState("environment");
   const [isTorchOn, setIsTorchOn] = useState(false);
+  const animationFrameId = useRef(null); // Store animation frame id
 
   useEffect(() => {
     isScanningRef.current = isScanning;
   }, [isScanning]);
-
-  const isPhone = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  //const isPhone = true; // Set to false for testing on desktop
 
   const handleError = (error) => {
     console.error("Error:", error);
@@ -29,7 +30,8 @@ const BarcodeScanner = () => {
     setData(null);
   };
 
-  const convertToGrayscale = (imageData) => {
+  // Memoize convertToGrayscale
+  const convertToGrayscale = useCallback((imageData) => {
     const data = imageData.data;
     for (let i = 0; i < data.length; i += 4) {
       const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
@@ -38,18 +40,18 @@ const BarcodeScanner = () => {
       data[i + 2] = avg; // Blue
     }
     return imageData;
-  };
+  }, []);
 
   const getMediaConstraints = async (facingMode) => {
     const baseSettings = isPhone()
       ? {
-          height: { ideal: 1080 },
-          width: { ideal: 1920 },
-        }
+        height: { ideal: 1080 },
+        width: { ideal: 1920 },
+      }
       : {
-          height: { ideal: 720 },
-          width: { ideal: 1280 },
-        };
+        height: { ideal: 720 },
+        width: { ideal: 1280 },
+      };
 
     // biome-ignore lint/style/useConst: <explanation>
     let customConstraints = {
@@ -174,15 +176,10 @@ const BarcodeScanner = () => {
   const handleScan = async () => {
     setData(null); // Clear previous data
     setIsScanning(true);
-
     try {
       const mediaConstraints = await getMediaConstraints(facingMode);
-
-      const stream =
-        await navigator.mediaDevices.getUserMedia(mediaConstraints);
-
+      const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
       videoRef.current.srcObject = stream;
-
       videoRef.current.onplay = async () => {
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d", { willReadFrequently: true });
@@ -191,61 +188,51 @@ const BarcodeScanner = () => {
         canvas.width = width;
         canvas.height = height;
 
+        // Store tick in ref to avoid closure issues
         const tick = async () => {
-          // Tick function always refers to current value of isScanning so isScanningRef is used to store the updated value at run time
           if (!isScanningRef.current) {
-            // Stop stream and scanning
-
-            console.log("Stopping scan...");
             handleStopScan();
             return;
           }
-
           context.drawImage(videoRef.current, 0, 0, width, height);
-
-          const imageData = context.getImageData(0, 0, width, height); // Get image data
+          const imageData = context.getImageData(0, 0, width, height);
           const grayscaleImageData = convertToGrayscale(imageData);
-
           const results = await scanImageData(grayscaleImageData);
-
           if (results && results.length > 0) {
-            // Stop scanning and show the result
             setIsScanning(false);
             handleStopScan();
-
             setData({
               typeName: results[0]?.typeName.replace("ZBAR_", ""),
               scanData: results[0]?.decode(),
             });
-
-            window?.navigator?.vibrate?.(300); // Vibrate device on successful scan (works only on Android devices)
-            audioRef.current.play(); // Play beep sound on successful scan
+            window?.navigator?.vibrate?.(300);
+            audioRef.current.play();
             setShowDialog(true);
           } else {
-            requestAnimationFrame(tick); // Continue scanning
+            animationFrameId.current = requestAnimationFrame(tick);
           }
         };
-
-        requestAnimationFrame(tick);
+        animationFrameId.current = requestAnimationFrame(tick);
       };
     } catch (error) {
       handleError(error);
     }
   };
 
-  const handleStopScan = () => {
-    console.log("Stopping scan...");
+  const handleStopScan = useCallback(() => {
     setIsScanning(false);
+    if (animationFrameId.current) {
+      cancelAnimationFrame(animationFrameId.current);
+      animationFrameId.current = null;
+    }
     if (videoRef.current?.srcObject) {
       const tracks = videoRef.current.srcObject.getTracks();
-      console.log("Stopping tracks:", tracks);
-      // biome-ignore lint/complexity/noForEach: List is not too long
-      tracks.forEach((track) => {
+      for (const track of tracks) {
         track.stop();
-      });
+      }
       videoRef.current.srcObject = null;
     }
-  };
+  }, []);
 
   const handleSwitchCamera = async () => {
     if (!videoRef.current) {
@@ -330,11 +317,17 @@ const BarcodeScanner = () => {
   };
 
   useEffect(() => {
-    // Cleanup function to release resources
+    // Cleanup function to release resources and cancel animation frame
     return () => {
       if (videoRef.current?.srcObject) {
-        // biome-ignore lint/complexity/noForEach: List is not too long
-        videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+        const tracks = videoRef.current.srcObject.getTracks();
+        for (const track of tracks) {
+          track.stop();
+        }
+      }
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+        animationFrameId.current = null;
       }
     };
   }, []);
@@ -370,9 +363,8 @@ const BarcodeScanner = () => {
         {/* DaisyUI IconButton replacement: Camera Switch */}
         <button
           type="button"
-          className={`btn btn-circle btn-outline mr-2 ${
-            !isScanning || !isPhone() ? "hidden" : ""
-          }`}
+          className={`btn btn-circle btn-outline btn-secondary mr-2 ${!isScanning || !isPhone() ? "hidden" : ""
+            }`}
           onClick={handleSwitchCamera}
         >
           <img
@@ -402,11 +394,10 @@ const BarcodeScanner = () => {
         {/* DaisyUI IconButton replacement: Torch */}
         <button
           type="button"
-          className={`btn btn-circle btn-outline ml-2 ${
-            !isScanning || !isPhone() || facingMode !== "environment"
-              ? "hidden"
-              : ""
-          }`}
+          className={`btn btn-circle btn-outline btn-secondary ml-2 ${!isScanning || !isPhone() || facingMode !== "environment"
+            ? "hidden"
+            : ""
+            }`}
           onClick={handleToggleTorch}
         >
           <img

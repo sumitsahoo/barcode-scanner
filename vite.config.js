@@ -89,7 +89,8 @@ export default defineConfig(async ({ command, mode }) => {
       port: 8080,
       strictPort: true,
       host: true,
-      //origin: "http://0.0.0.0:8080",
+      cors: true,
+      allowedHosts: true, // To allow any host to access your server
     },
   };
 });
