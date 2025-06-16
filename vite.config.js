@@ -1,5 +1,6 @@
-import { defineConfig, loadEnv } from "vite";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import { defineConfig, loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(async ({ command, mode }) => {
@@ -73,7 +74,7 @@ export default defineConfig(async ({ command, mode }) => {
   };
   return {
     base: env.VITE_APP_BASE_PATH, // Use the base path from environment variable
-    plugins: [react(), VitePWA(pwaOptions)],
+    plugins: [react(), tailwindcss(), VitePWA(pwaOptions)],
     define: {
       "process.env": env,
     },

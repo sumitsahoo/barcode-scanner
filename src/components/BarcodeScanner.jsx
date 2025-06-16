@@ -1,15 +1,6 @@
 import { scanImageData } from "@undecaf/zbar-wasm";
 import { useEffect, useRef, useState } from "react";
 
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  IconButton,
-} from "@material-tailwind/react";
-
 const BarcodeScanner = () => {
   const [data, setData] = useState({ typeName: "", scanData: "" });
 
@@ -30,6 +21,7 @@ const BarcodeScanner = () => {
   }, [isScanning]);
 
   const isPhone = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  //const isPhone = true; // Set to false for testing on desktop
 
   const handleError = (error) => {
     console.error("Error:", error);
@@ -375,13 +367,12 @@ const BarcodeScanner = () => {
         />
       )}
       <div className="absolute bottom-8 flex justify-center items-center rounded-full border border-white bg-white/30 shadow-lg shadow-black/10 saturate-200 backdrop-blur-xl z-30 p-2">
-        <IconButton
-          variant="outlined"
-          color="white"
-          className={`rounded-full mr-2 ${
+        {/* DaisyUI IconButton replacement: Camera Switch */}
+        <button
+          type="button"
+          className={`btn btn-circle btn-outline mr-2 ${
             !isScanning || !isPhone() ? "hidden" : ""
           }`}
-          size="md"
           onClick={handleSwitchCamera}
         >
           <img
@@ -389,14 +380,12 @@ const BarcodeScanner = () => {
             alt="Switch Camera"
             className="w-8 h-8"
           />
-        </IconButton>
+        </button>
 
-        <IconButton
-          key={isScanning ? "scanning" : "not-scanning"}
-          variant="gradient"
-          color="blue-gray"
-          className="rounded-full"
-          size="lg"
+        {/* DaisyUI IconButton replacement: Start/Stop Scan */}
+        <button
+          type="button"
+          className="btn btn-circle btn-primary"
           onClick={isScanning ? handleStopScan : handleScan}
         >
           <img
@@ -408,17 +397,16 @@ const BarcodeScanner = () => {
             alt={isScanning ? "Stop Scan" : "Start Scan"}
             className="w-8 h-8"
           />
-        </IconButton>
+        </button>
 
-        <IconButton
-          variant="outlined"
-          color="white"
-          className={`rounded-full ml-2 ${
+        {/* DaisyUI IconButton replacement: Torch */}
+        <button
+          type="button"
+          className={`btn btn-circle btn-outline ml-2 ${
             !isScanning || !isPhone() || facingMode !== "environment"
               ? "hidden"
               : ""
           }`}
-          size="md"
           onClick={handleToggleTorch}
         >
           <img
@@ -430,35 +418,32 @@ const BarcodeScanner = () => {
             alt="Switch Camera"
             className="w-8 h-8"
           />
-        </IconButton>
+        </button>
       </div>
 
       {data && (
-        <Dialog open={showDialog} handler={handleShowDialog}>
-          <DialogHeader>{data.typeName}</DialogHeader>
-
-          <DialogBody>
-            <p>{data.scanData}</p>
-          </DialogBody>
-
-          <DialogFooter>
-            <Button
-              variant="text"
-              color="blue-gray"
-              onClick={handleDataCopy}
-              className="mr-1"
-            >
-              <span>COPY</span>
-            </Button>
-            <Button
-              variant="gradient"
-              color="blue-gray"
-              onClick={handleShowDialog}
-            >
-              <span>CLOSE</span>
-            </Button>
-          </DialogFooter>
-        </Dialog>
+        <div className={`modal ${showDialog ? "modal-open" : ""}`}>
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">{data.typeName}</h3>
+            <p className="py-4">{data.scanData}</p>
+            <div className="modal-action">
+              <button
+                type="button"
+                className="btn btn-outline mr-2"
+                onClick={handleDataCopy}
+              >
+                COPY
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleShowDialog}
+              >
+                CLOSE
+              </button>
+            </div>
+          </div>
+        </div>
       )}
       {/* biome-ignore lint/a11y/useMediaCaption: This is only for beep sound */}
       <audio
