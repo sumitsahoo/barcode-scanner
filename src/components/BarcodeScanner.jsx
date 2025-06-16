@@ -1,4 +1,3 @@
-import { scanImageData } from "@undecaf/zbar-wasm";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // Memoize isPhone outside the component to avoid recreation
@@ -19,6 +18,13 @@ const BarcodeScanner = () => {
   const [facingMode, setFacingMode] = useState("environment");
   const [isTorchOn, setIsTorchOn] = useState(false);
   const animationFrameId = useRef(null); // Store animation frame id
+
+  // Lazy-load zbar-wasm
+  const scanImageDataRef = useRef(null);
+
+  // Throttle interval for scanning (ms)
+  const SCAN_INTERVAL = 150;
+  const lastScanTimeRef = useRef(0);
 
   useEffect(() => {
     isScanningRef.current = isScanning;
@@ -177,6 +183,12 @@ const BarcodeScanner = () => {
     setData(null); // Clear previous data
     setIsScanning(true);
     try {
+      // Lazy-load zbar-wasm
+      if (!scanImageDataRef.current) {
+        const zbar = await import("@undecaf/zbar-wasm");
+        scanImageDataRef.current = zbar.scanImageData;
+      }
+      const scanImageData = scanImageDataRef.current;
       const mediaConstraints = await getMediaConstraints(facingMode);
       const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
       videoRef.current.srcObject = stream;
@@ -194,6 +206,12 @@ const BarcodeScanner = () => {
             handleStopScan();
             return;
           }
+          const now = Date.now();
+          if (now - lastScanTimeRef.current < SCAN_INTERVAL) {
+            animationFrameId.current = requestAnimationFrame(tick);
+            return;
+          }
+          lastScanTimeRef.current = now;
           context.drawImage(videoRef.current, 0, 0, width, height);
           const imageData = context.getImageData(0, 0, width, height);
           const grayscaleImageData = convertToGrayscale(imageData);
@@ -201,9 +219,16 @@ const BarcodeScanner = () => {
           if (results && results.length > 0) {
             setIsScanning(false);
             handleStopScan();
-            setData({
-              typeName: results[0]?.typeName.replace("ZBAR_", ""),
-              scanData: results[0]?.decode(),
+            setData((prev) => {
+              const newData = {
+                typeName: results[0]?.typeName.replace("ZBAR_", ""),
+                scanData: results[0]?.decode(),
+              };
+              // Only update if changed
+              if (!prev || prev.scanData !== newData.scanData) {
+                return newData;
+              }
+              return prev;
             });
             window?.navigator?.vibrate?.(300);
             audioRef.current.play();
@@ -324,6 +349,7 @@ const BarcodeScanner = () => {
         for (const track of tracks) {
           track.stop();
         }
+        videoRef.current.srcObject = null;
       }
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
