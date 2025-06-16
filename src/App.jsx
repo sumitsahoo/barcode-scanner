@@ -2,12 +2,15 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { useEffect, useState } from "react";
 import BarcodeScanner from "./components/BarcodeScanner";
+import { getThemeColors } from "./utils/themeColors";
 
 const App = () => {
   const [_init, setInit] = useState(false);
 
-  const backgroundColor = "#ECEFF1";
-  const particlesColor = "#78909C";
+  // Get DaisyUI theme colors
+  const { background, primary } = getThemeColors();
+  const particlesColor = primary;
+  const backgroundColor = background;
 
   // this should be run only once per application lifetime
   useEffect(() => {

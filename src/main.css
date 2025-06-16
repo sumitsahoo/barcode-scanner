@@ -6,6 +6,7 @@
   default: true;
   --color-primary: #78909c;
   --color-secondary: #f6d860;
+  --b1: #eceff1;
 }
 
 /* @config '../tailwind.config.js'; */
