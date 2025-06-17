@@ -199,9 +199,9 @@ const BarcodeScanner = () => {
     <div className="relative w-full h-dvh grid grid-cols-1 gap-6 place-items-center overflow-hidden backdrop-blur-none">
       <div className="flex justify-center items-center relative">
         <img
-          src={`${process.env.VITE_APP_BASE_PATH}images/ic-camera-closed-white.svg`}
+          src={`${process.env.VITE_APP_BASE_PATH}images/ic-camera-closed.svg`}
           alt="Camera Closed"
-          className="absolute -mt-32 z-10 w-[40vw] h-[40vw] md:w-[30vw] md:h-[30vw] object-cover"
+          className="absolute -mt-32 z-10 w-[40vw] h-[40vw] md:w-[30vw] md:h-[30vw] object-cover text-primary filter-none mix-blend-multiply"
         />
         <video
           title="Barcode Scanner"
