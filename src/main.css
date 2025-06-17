@@ -2,14 +2,78 @@
 
 @plugin "daisyui";
 @plugin "daisyui/theme" {
-  name: "light";
+  name: "customtheme";
   default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  --color-base-100: #ffffff;
+  --color-base-200: #f3f4f6;
+  --color-base-300: #e5e7eb;
+  --color-base-content: #1f2937;
   --color-primary: #78909c;
-  --color-secondary: #f6d860;
-  --b1: #eceff1;
+  --color-primary-content: #ffffff;
+  --color-secondary: #ffb347;
+  --color-secondary-content: #1f2937;
+  --color-accent: #37cdbe;
+  --color-accent-content: #ffffff;
+  --color-neutral: #3d4451;
+  --color-neutral-content: #ffffff;
+  --color-info: #2094f3;
+  --color-info-content: #ffffff;
+  --color-success: #009485;
+  --color-success-content: #ffffff;
+  --color-warning: #ff9900;
+  --color-warning-content: #ffffff;
+  --color-error: #ff5724;
+  --color-error-content: #ffffff;
+
+  --radius-selector: 1rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
 }
 
-/* @config '../tailwind.config.js'; */
+@plugin "daisyui/theme" {
+  name: "customtheme-dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: dark;
+
+  --color-base-100: #101624;
+  --color-base-200: #18213a;
+  --color-base-300: #22304a;
+  --color-base-content: #ffffff;
+  --color-primary: #78909c;
+  --color-primary-content: #ffffff;
+  --color-secondary: #ffb347;
+  --color-secondary-content: #101624;
+  --color-accent: #37cdbe;
+  --color-accent-content: #101624;
+  --color-neutral: #3d4451;
+  --color-neutral-content: #e5e7eb;
+  --color-info: #2094f3;
+  --color-info-content: #101624;
+  --color-success: #00ffae;
+  --color-success-content: #101624;
+  --color-warning: #ff9900;
+  --color-warning-content: #101624;
+  --color-error: #ff5724;
+  --color-error-content: #101624;
+
+  --radius-selector: 1rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
 
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
