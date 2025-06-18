@@ -5,6 +5,11 @@ import {
   isPhone,
   stopAllTracks,
 } from "../utils/barcodeHelpers";
+import IconCameraClosed from "./icons/IconCameraClosed";
+import IconCameraOpen from "./icons/IconCameraOpen";
+import IconRotateCamera from "./icons/IconRotateCamera";
+import IconTorchOff from "./icons/IconTorchOff";
+import IconTorchOn from "./icons/IconTorchOn";
 
 // Custom hook for scanning logic and camera state
 const useBarcodeScanner = () => {
@@ -42,7 +47,8 @@ const useBarcodeScanner = () => {
       }
       const scanImageData = scanImageDataRef.current;
       const mediaConstraints = await getMediaConstraints(scanState.facingMode);
-      const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+      const stream =
+        await navigator.mediaDevices.getUserMedia(mediaConstraints);
       videoRef.current.srcObject = stream;
       videoRef.current.onplay = async () => {
         const canvas = canvasRef.current;
@@ -107,10 +113,12 @@ const useBarcodeScanner = () => {
     if (videoRef.current.srcObject) {
       stopAllTracks(videoRef.current.srcObject);
     }
-    const newFacingMode = scanState.facingMode === "user" ? "environment" : "user";
+    const newFacingMode =
+      scanState.facingMode === "user" ? "environment" : "user";
     try {
       const mediaConstraints = await getMediaConstraints(newFacingMode);
-      const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+      const stream =
+        await navigator.mediaDevices.getUserMedia(mediaConstraints);
       videoRef.current.srcObject = stream;
       setScanState((prev) => ({ ...prev, facingMode: newFacingMode }));
     } catch (error) {
@@ -145,12 +153,13 @@ const useBarcodeScanner = () => {
     if (!scanState.data) return;
     navigator.clipboard.writeText(scanState.data.scanData || "").then(
       () => { },
-      () => { }
+      () => { },
     );
     setScanState((prev) => ({ ...prev, showDialog: false }));
   };
 
-  const handleShowDialog = () => setScanState((prev) => ({ ...prev, showDialog: !prev.showDialog }));
+  const handleShowDialog = () =>
+    setScanState((prev) => ({ ...prev, showDialog: !prev.showDialog }));
 
   useEffect(() => {
     return () => {
@@ -177,7 +186,7 @@ const useBarcodeScanner = () => {
     handleDataCopy,
     handleShowDialog,
   };
-}
+};
 
 const BarcodeScanner = () => {
   const {
@@ -198,11 +207,8 @@ const BarcodeScanner = () => {
   return (
     <div className="relative w-full h-dvh grid grid-cols-1 gap-6 place-items-center overflow-hidden backdrop-blur-none">
       <div className="flex justify-center items-center relative">
-        <img
-          src={`${process.env.VITE_APP_BASE_PATH}images/ic-camera-closed.svg`}
-          alt="Camera Closed"
-          className="absolute -mt-32 z-10 w-[40vw] h-[40vw] md:w-[30vw] md:h-[30vw] object-cover text-primary filter-none mix-blend-multiply"
-        />
+
+        <IconCameraClosed className="absolute -mt-32 z-10 w-[40vw] h-[40vw] md:w-[30vw] md:h-[30vw] text-primary" />
         <video
           title="Barcode Scanner"
           ref={videoRef}
@@ -222,32 +228,24 @@ const BarcodeScanner = () => {
           }}
         />
       )}
-      <div className="absolute bottom-8 flex justify-center items-center rounded-full border border-white bg-white/30 shadow-lg shadow-black/10 saturate-200 backdrop-blur-xl z-30 p-2">
+      <div className="absolute bottom-8 flex justify-center items-center rounded-full border border-secondary bg-white/30 shadow-lg shadow-black/10 saturate-200 backdrop-blur-xl z-30 p-2">
         <button
           type="button"
           className={`btn btn-circle btn-outline btn-secondary mr-2 ${!isScanning || !isPhone() ? "hidden" : ""}`}
           onClick={handleSwitchCamera}
         >
-          <img
-            src={`${process.env.VITE_APP_BASE_PATH}images/ic-rotate-camera.svg`}
-            alt="Switch Camera"
-            className="w-8 h-8"
-          />
+          <IconRotateCamera className="w-8 h-8 text-secondary" />
         </button>
         <button
           type="button"
           className="btn btn-circle btn-primary"
           onClick={isScanning ? handleStopScan : handleScan}
         >
-          <img
-            src={
-              isScanning
-                ? `${process.env.VITE_APP_BASE_PATH}images/ic-camera-closed-white.svg`
-                : `${process.env.VITE_APP_BASE_PATH}images/ic-camera-open-white.svg`
-            }
-            alt={isScanning ? "Stop Scan" : "Start Scan"}
-            className="w-8 h-8"
-          />
+          {isScanning ? (
+            <IconCameraClosed className="w-8 h-8 text-primary-content" />
+          ) : (
+            <IconCameraOpen className="w-8 h-8 text-primary-content" />
+          )}
         </button>
         <button
           type="button"
@@ -257,15 +255,11 @@ const BarcodeScanner = () => {
             }`}
           onClick={handleToggleTorch}
         >
-          <img
-            src={
-              isTorchOn
-                ? `${process.env.VITE_APP_BASE_PATH}images/ic-torch-off.svg`
-                : `${process.env.VITE_APP_BASE_PATH}images/ic-torch-on.svg`
-            }
-            alt="Switch Camera"
-            className="w-8 h-8"
-          />
+          {isTorchOn ? (
+            <IconTorchOff className="w-8 h-8 text-secondary" />
+          ) : (
+            <IconTorchOn className="w-8 h-8 text-secondary" />
+          )}
         </button>
       </div>
       {data && (
