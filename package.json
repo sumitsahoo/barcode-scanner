@@ -2,7 +2,7 @@
   "name": "barcode-scanner",
   "author": "Sumit Sahoo",
   "private": true,
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "homepage": "https://sumitsahoo.github.io/barcode-scanner",
   "scripts": {
