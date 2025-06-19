@@ -152,8 +152,8 @@ const useBarcodeScanner = () => {
   const handleDataCopy = () => {
     if (!scanState.data) return;
     navigator.clipboard.writeText(scanState.data.scanData || "").then(
-      () => { },
-      () => { },
+      () => {},
+      () => {},
     );
     setScanState((prev) => ({ ...prev, showDialog: false }));
   };
@@ -207,7 +207,6 @@ const BarcodeScanner = () => {
   return (
     <div className="relative w-full h-dvh grid grid-cols-1 gap-6 place-items-center overflow-hidden backdrop-blur-none">
       <div className="flex justify-center items-center relative">
-
         <IconCameraClosed className="absolute -mt-32 z-10 w-[40vw] h-[40vw] md:w-[30vw] md:h-[30vw] text-primary" />
         <video
           title="Barcode Scanner"
@@ -249,10 +248,11 @@ const BarcodeScanner = () => {
         </button>
         <button
           type="button"
-          className={`btn btn-circle btn-outline btn-secondary ml-2 ${!isScanning || !isPhone() || facingMode !== "environment"
-            ? "hidden"
-            : ""
-            }`}
+          className={`btn btn-circle btn-outline btn-secondary ml-2 ${
+            !isScanning || !isPhone() || facingMode !== "environment"
+              ? "hidden"
+              : ""
+          }`}
           onClick={handleToggleTorch}
         >
           {isTorchOn ? (
