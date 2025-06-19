@@ -5,7 +5,7 @@
  * @param {string} className - Additional Tailwind or custom classes
  * @param {object} props - Other props passed to the SVG
  */
-/** biome-ignore-all lint/nursery/useUniqueElementIds: <explanation> */
+/** biome-ignore-all lint/nursery/useUniqueElementIds: This is just an SVG, unique ID is not needed */
 const IconCameraOpen = ({ className = "", ...props }) => (
   <svg
     viewBox="0 0 24 24"
