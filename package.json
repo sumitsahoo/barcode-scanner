@@ -16,7 +16,6 @@
     "generate-pwa-assets": "pwa-assets-generator --preset minimal public/images/ic-logo.svg"
   },
   "dependencies": {
-    "@heroicons/react": "^2.2.0",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.8.1",
     "@undecaf/zbar-wasm": "^0.11.0",
