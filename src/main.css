@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 @plugin "daisyui";
+
+/* Primary: #8bd5ca, Secondary: #a6da95 */
+
 @plugin "daisyui/theme" {
   name: "customtheme";
   default: true;
@@ -10,11 +13,11 @@
   --color-base-100: #ffffff;
   --color-base-200: #f3f4f6;
   --color-base-300: #e5e7eb;
-  --color-base-content: #78909c;
-  --color-primary: #78909c;
-  --color-primary-content: #ffffff;
-  --color-secondary: #ffb347;
-  --color-secondary-content: #1f2937;
+  --color-base-content: #537f79;
+  --color-primary: #8bd5ca;
+  --color-primary-content: #537f79;
+  --color-secondary: #a6da95;
+  --color-secondary-content: #537f79;
   --color-accent: #37cdbe;
   --color-accent-content: #ffffff;
   --color-neutral: #3d4451;
@@ -44,27 +47,26 @@
   prefersdark: true;
   color-scheme: dark;
 
-  /* In dark, use light's secondary (#ffb347) as primary, and base other colors on this */
-  --color-base-100: #2a2118;
-  --color-base-200: #1a140c;
-  --color-base-300: #120d07;
-  --color-base-content: #fff3e0;
-  --color-primary: #ffb347;
-  --color-primary-content: #2a2118;
-  --color-secondary: #ffcb80;
-  --color-secondary-content: #2a2118;
-  --color-accent: #ffd699;
-  --color-accent-content: #2a2118;
-  --color-neutral: #a67c52;
-  --color-neutral-content: #fff3e0;
-  --color-info: #ffe0b2;
-  --color-info-content: #2a2118;
-  --color-success: #ffd699;
-  --color-success-content: #2a2118;
-  --color-warning: #ffb347;
-  --color-warning-content: #2a2118;
+  --color-base-100: #1a2223;
+  --color-base-200: #232a2e;
+  --color-base-300: #2c3333;
+  --color-base-content: #e0f2f1;
+  --color-primary: #8bd5ca;
+  --color-primary-content: #1a2223;
+  --color-secondary: #a6da95;
+  --color-secondary-content: #1a2223;
+  --color-accent: #37cdbe;
+  --color-accent-content: #1a2223;
+  --color-neutral: #3d4451;
+  --color-neutral-content: #e0f2f1;
+  --color-info: #2094f3;
+  --color-info-content: #e0f2f1;
+  --color-success: #009485;
+  --color-success-content: #e0f2f1;
+  --color-warning: #ff9900;
+  --color-warning-content: #e0f2f1;
   --color-error: #ff5724;
-  --color-error-content: #2a2118;
+  --color-error-content: #e0f2f1;
 
   --radius-selector: 1rem;
   --radius-field: 0.25rem;

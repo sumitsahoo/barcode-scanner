@@ -20,8 +20,8 @@ export default defineConfig(async ({ command, mode }) => {
       description:
         "A fast and efficient barcode scanner app designed for all devices.",
       short_name: "Barcode Scanner",
-      theme_color: "#78909C",
-      background_color: "#78909c",
+      theme_color: "#8bd5ca",
+      background_color: "#8bd5ca",
       display: "standalone",
       display_override: ["standalone"],
       orientation: "portrait",
