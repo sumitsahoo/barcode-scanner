@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+@plugin "daisyui";
+
+/* Primary: #8bd5ca, Secondary: #a6da95 */
+
+@plugin "daisyui/theme" {
+  name: "customtheme";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  --color-base-100: #ffffff;
+  --color-base-200: #f3f4f6;
+  --color-base-300: #e5e7eb;
+  --color-base-content: #537f79;
+  --color-primary: #8bd5ca;
+  --color-primary-content: #537f79;
+  --color-secondary: #a6da95;
+  --color-secondary-content: #537f79;
+  --color-accent: #37cdbe;
+  --color-accent-content: #ffffff;
+  --color-neutral: #3d4451;
+  --color-neutral-content: #ffffff;
+  --color-info: #2094f3;
+  --color-info-content: #ffffff;
+  --color-success: #009485;
+  --color-success-content: #ffffff;
+  --color-warning: #ff9900;
+  --color-warning-content: #ffffff;
+  --color-error: #ff5724;
+  --color-error-content: #ffffff;
+
+  --radius-selector: 1rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "customtheme-dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: dark;
+
+  --color-base-100: #1a2223;
+  --color-base-200: #232a2e;
+  --color-base-300: #2c3333;
+  --color-base-content: #e0f2f1;
+  --color-primary: #8bd5ca;
+  --color-primary-content: #1a2223;
+  --color-secondary: #a6da95;
+  --color-secondary-content: #1a2223;
+  --color-accent: #37cdbe;
+  --color-accent-content: #1a2223;
+  --color-neutral: #3d4451;
+  --color-neutral-content: #e0f2f1;
+  --color-info: #2094f3;
+  --color-info-content: #e0f2f1;
+  --color-success: #009485;
+  --color-success-content: #e0f2f1;
+  --color-warning: #ff9900;
+  --color-warning-content: #e0f2f1;
+  --color-error: #ff5724;
+  --color-error-content: #e0f2f1;
+
+  --radius-selector: 1rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@utility animate-scan {
+  animation: scan 4s infinite;
+}
+
+@layer utilities {
+  @keyframes scan {
+    0%,
+    100% {
+      top: 20%;
+    }
+    50% {
+      top: 80%;
+    }
+  }
+}

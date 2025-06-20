@@ -1,5 +1,6 @@
-import { defineConfig, loadEnv } from "vite";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import { defineConfig, loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(async ({ command, mode }) => {
@@ -19,8 +20,8 @@ export default defineConfig(async ({ command, mode }) => {
       description:
         "A fast and efficient barcode scanner app designed for all devices.",
       short_name: "Barcode Scanner",
-      theme_color: "#78909C",
-      background_color: "#78909c",
+      theme_color: "#8bd5ca",
+      background_color: "#8bd5ca",
       display: "standalone",
       display_override: ["standalone"],
       orientation: "portrait",
@@ -73,7 +74,7 @@ export default defineConfig(async ({ command, mode }) => {
   };
   return {
     base: env.VITE_APP_BASE_PATH, // Use the base path from environment variable
-    plugins: [react(), VitePWA(pwaOptions)],
+    plugins: [react(), tailwindcss(), VitePWA(pwaOptions)],
     define: {
       "process.env": env,
     },
@@ -88,7 +89,8 @@ export default defineConfig(async ({ command, mode }) => {
       port: 8080,
       strictPort: true,
       host: true,
-      //origin: "http://0.0.0.0:8080",
+      cors: true,
+      allowedHosts: true, // To allow any host to access your server
     },
   };
 });
