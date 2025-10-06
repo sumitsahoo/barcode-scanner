@@ -94,6 +94,20 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
   }
+
+  /* Prevent scrolling on the entire page */
+  html,
+  body {
+    overflow: hidden;
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+  }
+
+  #root {
+    height: 100dvh;
+    overflow: hidden;
+  }
 }
 
 /* Barcode scanning animation - optimized for smooth 60fps performance */

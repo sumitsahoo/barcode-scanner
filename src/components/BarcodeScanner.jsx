@@ -325,16 +325,16 @@ const BarcodeScanner = () => {
   const shouldShowTorchButton = isScanning && isPhoneDevice && facingMode === "environment";
 
   return (
-    <div className="relative w-full h-dvh grid grid-cols-1 gap-6 place-items-center overflow-hidden backdrop-blur-none">
-      <div className="flex justify-center items-center relative">
-        <IconCameraClosed className="absolute -mt-32 z-10 w-[40vw] h-[40vw] md:w-[30vw] md:h-[30vw] text-primary" />
+    <div className="relative w-full h-dvh flex justify-center items-center overflow-hidden backdrop-blur-none">
+      <div className="absolute inset-0 flex justify-center items-center">
+        <IconCameraClosed className="absolute z-10 w-[40vw] h-[40vw] md:w-[30vw] md:h-[30vw] text-primary" />
         <video
           title="Barcode Scanner"
           ref={videoRef}
           autoPlay
           muted
           playsInline
-          className="w-screen h-screen object-cover drop-shadow-xl relative z-20"
+          className="w-full h-full object-cover drop-shadow-xl relative z-20"
         />
       </div>
       <canvas ref={canvasRef} hidden />
