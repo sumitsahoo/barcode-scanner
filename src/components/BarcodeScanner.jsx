@@ -2,7 +2,6 @@ import {
   useCallback,
   useEffect,
   useId,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -29,6 +28,7 @@ const CANVAS_CONTEXT_OPTIONS = {
 /**
  * Custom hook for barcode scanning logic and camera state management
  * Handles video stream, barcode detection, and camera controls
+ * Optimized for React 19 performance improvements
  */
 const useBarcodeScanner = () => {
   const [scanState, setScanState] = useState({
@@ -50,6 +50,7 @@ const useBarcodeScanner = () => {
   const lastScanTimeRef = useRef(0);
   const isScanningRef = useRef(scanState.isScanning);
 
+  // Keep ref in sync with state for scan loop optimization
   useEffect(() => {
     isScanningRef.current = scanState.isScanning;
   }, [scanState.isScanning]);
@@ -160,7 +161,7 @@ const useBarcodeScanner = () => {
 
             handleStopScan();
             window?.navigator?.vibrate?.(VIBRATION_DURATION_MS);
-            audioRef.current?.play().catch(() => {});
+            audioRef.current?.play().catch(() => { });
           } else {
             animationFrameId.current = requestAnimationFrame(scanTick);
           }
@@ -318,15 +319,10 @@ const BarcodeScanner = () => {
   const dialogTitleId = useId();
 
   // Computed values for conditional rendering
-  const isPhoneDevice = useMemo(() => isPhone(), []);
-  const shouldShowRotateButton = useMemo(
-    () => isScanning && isPhoneDevice,
-    [isScanning, isPhoneDevice],
-  );
-  const shouldShowTorchButton = useMemo(
-    () => isScanning && isPhoneDevice && facingMode === "environment",
-    [isScanning, isPhoneDevice, facingMode],
-  );
+  // isPhone() doesn't need useMemo as it has no dependencies and is a simple check
+  const isPhoneDevice = isPhone();
+  const shouldShowRotateButton = isScanning && isPhoneDevice;
+  const shouldShowTorchButton = isScanning && isPhoneDevice && facingMode === "environment";
 
   return (
     <div className="relative w-full h-dvh grid grid-cols-1 gap-6 place-items-center overflow-hidden backdrop-blur-none">
