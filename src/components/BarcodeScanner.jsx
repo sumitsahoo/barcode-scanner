@@ -25,9 +25,10 @@ const useBarcodeScanner = () => {
   const audioRef = useRef(null);
   const animationFrameId = useRef(null);
   const scanImageDataRef = useRef(null);
-  const SCAN_INTERVAL = 150;
+  const SCAN_INTERVAL = 100; // Reduced from 150ms for faster scanning
   const lastScanTimeRef = useRef(0);
   const isScanningRef = useRef(scanState.isScanning);
+  const contextRef = useRef(null);
 
   useEffect(() => {
     isScanningRef.current = scanState.isScanning;
@@ -50,29 +51,46 @@ const useBarcodeScanner = () => {
       const stream =
         await navigator.mediaDevices.getUserMedia(mediaConstraints);
       videoRef.current.srcObject = stream;
-      videoRef.current.onplay = async () => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext("2d", { willReadFrequently: true });
-        const width = videoRef.current.videoWidth;
-        const height = videoRef.current.videoHeight;
-        canvas.width = width;
-        canvas.height = height;
-        const tick = async () => {
-          if (!isScanningRef.current) {
-            handleStopScan();
-            return;
-          }
-          const now = Date.now();
-          if (now - lastScanTimeRef.current < SCAN_INTERVAL) {
-            animationFrameId.current = requestAnimationFrame(tick);
-            return;
-          }
-          lastScanTimeRef.current = now;
+
+      // Wait for video to be ready before starting scan loop
+      await videoRef.current.play();
+
+      const canvas = canvasRef.current;
+      // Reuse context if already created
+      if (!contextRef.current) {
+        contextRef.current = canvas.getContext("2d", {
+          willReadFrequently: true,
+          alpha: false // Performance optimization - we don't need alpha channel
+        });
+      }
+      const context = contextRef.current;
+
+      const width = videoRef.current.videoWidth;
+      const height = videoRef.current.videoHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      const tick = async () => {
+        if (!isScanningRef.current) {
+          return;
+        }
+        const now = Date.now();
+        if (now - lastScanTimeRef.current < SCAN_INTERVAL) {
+          animationFrameId.current = requestAnimationFrame(tick);
+          return;
+        }
+        lastScanTimeRef.current = now;
+
+        try {
           context.drawImage(videoRef.current, 0, 0, width, height);
           const imageData = context.getImageData(0, 0, width, height);
           const grayscaleImageData = convertToGrayscale(imageData);
           const results = await scanImageData(grayscaleImageData);
+
           if (results && results.length > 0) {
+            // Stop scanning immediately to prevent duplicate scans
+            isScanningRef.current = false;
+
             setScanState((prev) => ({
               ...prev,
               isScanning: false,
@@ -84,45 +102,73 @@ const useBarcodeScanner = () => {
             }));
             handleStopScan();
             window?.navigator?.vibrate?.(300);
-            audioRef.current.play();
+            audioRef.current?.play().catch(() => { }); // Ignore audio play errors
           } else {
             animationFrameId.current = requestAnimationFrame(tick);
           }
-        };
-        animationFrameId.current = requestAnimationFrame(tick);
+        } catch (err) {
+          console.error("Error during scan tick:", err);
+          animationFrameId.current = requestAnimationFrame(tick);
+        }
       };
+      animationFrameId.current = requestAnimationFrame(tick);
     } catch (error) {
       handleError(error);
     }
   };
 
   const handleStopScan = useCallback(() => {
-    setScanState((prev) => ({ ...prev, isScanning: false }));
+    isScanningRef.current = false;
+    setScanState((prev) => ({ ...prev, isScanning: false, isTorchOn: false }));
+
     if (animationFrameId.current) {
       cancelAnimationFrame(animationFrameId.current);
       animationFrameId.current = null;
     }
-    if (videoRef.current?.srcObject) {
-      stopAllTracks(videoRef.current.srcObject);
-      videoRef.current.srcObject = null;
+
+    if (videoRef.current) {
+      videoRef.current.pause(); // Pause video to free resources
+      if (videoRef.current.srcObject) {
+        stopAllTracks(videoRef.current.srcObject);
+        videoRef.current.srcObject = null;
+      }
     }
   }, []);
 
   const handleSwitchCamera = async () => {
-    if (!videoRef.current) return;
-    if (videoRef.current.srcObject) {
-      stopAllTracks(videoRef.current.srcObject);
-    }
+    if (!videoRef.current || !isScanningRef.current) return;
+
     const newFacingMode =
       scanState.facingMode === "user" ? "environment" : "user";
+
     try {
+      // Stop current stream
+      if (videoRef.current.srcObject) {
+        stopAllTracks(videoRef.current.srcObject);
+      }
+
       const mediaConstraints = await getMediaConstraints(newFacingMode);
-      const stream =
-        await navigator.mediaDevices.getUserMedia(mediaConstraints);
+      const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
       videoRef.current.srcObject = stream;
-      setScanState((prev) => ({ ...prev, facingMode: newFacingMode }));
+
+      // Wait for video to be ready
+      await videoRef.current.play();
+
+      // Update canvas dimensions if they changed
+      const canvas = canvasRef.current;
+      const width = videoRef.current.videoWidth;
+      const height = videoRef.current.videoHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      setScanState((prev) => ({
+        ...prev,
+        facingMode: newFacingMode,
+        isTorchOn: false // Reset torch when switching cameras
+      }));
     } catch (error) {
       console.error("Error switching camera:", error);
+      handleError(error);
     }
   };
 
@@ -132,29 +178,29 @@ const useBarcodeScanner = () => {
     if (tracks && tracks.length > 0) {
       const track = tracks[0];
       const capabilities = track.getCapabilities();
-      if (!capabilities.torch) return;
+      if (!capabilities.torch) {
+        console.warn("Torch not supported on this device");
+        return;
+      }
       try {
+        const newTorchState = !scanState.isTorchOn;
         await track.applyConstraints({
-          advanced: [
-            {
-              fillLightMode: scanState.isTorchOn ? "flash" : "off",
-              torch: !scanState.isTorchOn,
-            },
-          ],
+          advanced: [{ torch: newTorchState }],
         });
-        setScanState((prev) => ({ ...prev, isTorchOn: !prev.isTorchOn }));
+        setScanState((prev) => ({ ...prev, isTorchOn: newTorchState }));
       } catch (error) {
-        console.error("Error toggling flash:", error);
+        console.error("Error toggling torch:", error);
       }
     }
   };
 
-  const handleDataCopy = () => {
-    if (!scanState.data) return;
-    navigator.clipboard.writeText(scanState.data.scanData || "").then(
-      () => { },
-      () => { },
-    );
+  const handleDataCopy = async () => {
+    if (!scanState.data?.scanData) return;
+    try {
+      await navigator.clipboard.writeText(scanState.data.scanData);
+    } catch (error) {
+      console.error("Error copying to clipboard:", error);
+    }
     setScanState((prev) => ({ ...prev, showDialog: false }));
   };
 
@@ -163,14 +209,24 @@ const useBarcodeScanner = () => {
 
   useEffect(() => {
     return () => {
-      if (videoRef.current?.srcObject) {
-        stopAllTracks(videoRef.current.srcObject);
-        videoRef.current.srcObject = null;
-      }
+      // Cleanup on unmount
+      isScanningRef.current = false;
+
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
         animationFrameId.current = null;
       }
+
+      if (videoRef.current) {
+        if (videoRef.current.srcObject) {
+          stopAllTracks(videoRef.current.srcObject);
+          videoRef.current.srcObject = null;
+        }
+        videoRef.current.pause();
+      }
+
+      // Clear context reference
+      contextRef.current = null;
     };
   }, []);
 
@@ -249,8 +305,8 @@ const BarcodeScanner = () => {
         <button
           type="button"
           className={`btn btn-circle btn-outline btn-secondary ml-2 ${!isScanning || !isPhone() || facingMode !== "environment"
-              ? "hidden"
-              : ""
+            ? "hidden"
+            : ""
             }`}
           onClick={handleToggleTorch}
         >
