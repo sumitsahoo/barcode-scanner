@@ -97,17 +97,18 @@
 }
 
 @utility animate-scan {
-  animation: scan 4s infinite;
+  animation: scan 2s ease-in-out infinite;
+  will-change: transform;
 }
 
 @layer utilities {
   @keyframes scan {
     0%,
     100% {
-      top: 20%;
+      transform: translateY(0);
     }
     50% {
-      top: 80%;
+      transform: translateY(60vh);
     }
   }
 }

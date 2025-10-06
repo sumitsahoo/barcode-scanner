@@ -152,8 +152,8 @@ const useBarcodeScanner = () => {
   const handleDataCopy = () => {
     if (!scanState.data) return;
     navigator.clipboard.writeText(scanState.data.scanData || "").then(
-      () => {},
-      () => {},
+      () => { },
+      () => { },
     );
     setScanState((prev) => ({ ...prev, showDialog: false }));
   };
@@ -222,7 +222,7 @@ const BarcodeScanner = () => {
         <div
           className="absolute w-[70%] h-1 bg-red-500 bg-opacity-70 z-40 animate-scan"
           style={{
-            top: 0,
+            top: "20%",
             left: "15%",
           }}
         />
@@ -248,11 +248,10 @@ const BarcodeScanner = () => {
         </button>
         <button
           type="button"
-          className={`btn btn-circle btn-outline btn-secondary ml-2 ${
-            !isScanning || !isPhone() || facingMode !== "environment"
+          className={`btn btn-circle btn-outline btn-secondary ml-2 ${!isScanning || !isPhone() || facingMode !== "environment"
               ? "hidden"
               : ""
-          }`}
+            }`}
           onClick={handleToggleTorch}
         >
           {isTorchOn ? (
