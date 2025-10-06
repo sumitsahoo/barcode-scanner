@@ -96,19 +96,33 @@
   }
 }
 
+/* Barcode scanning animation - optimized for smooth 60fps performance */
 @utility animate-scan {
-  animation: scan 2s ease-in-out infinite;
+  /* Custom cubic-bezier for smoother, more natural easing than ease-in-out */
+  animation: scan 2.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  /* Hint to browser to optimize this property for animation */
   will-change: transform;
+  /* Force GPU acceleration by creating a new composite layer */
+  transform: translateZ(0);
+  /* Prevent flickering and improve rendering performance */
+  backface-visibility: hidden;
+  /* Further optimize 3D transform rendering */
+  perspective: 1000px;
 }
 
 @layer utilities {
   @keyframes scan {
-    0%,
-    100% {
-      transform: translateY(0);
+    /* Start at top (20% from viewport top, set in component) */
+    0% {
+      transform: translateY(0) translateZ(0);
     }
+    /* Move down 60vh to stay within bounds (ends at ~80% from top) */
     50% {
-      transform: translateY(60vh);
+      transform: translateY(60vh) translateZ(0);
+    }
+    /* Return to starting position */
+    100% {
+      transform: translateY(0) translateZ(0);
     }
   }
 }
