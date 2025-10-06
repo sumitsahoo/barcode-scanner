@@ -5,11 +5,18 @@ export const isPhone = () =>
 
 export const convertToGrayscale = (imageData) => {
   const data = imageData.data;
-  for (let i = 0; i < data.length; i += 4) {
-    const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-    data[i] = avg;
-    data[i + 1] = avg;
-    data[i + 2] = avg;
+  const len = data.length;
+
+  // Optimized grayscale conversion using luminosity method
+  // More accurate than simple average and uses bitwise operations for speed
+  for (let i = 0; i < len; i += 4) {
+    // Luminosity method: 0.299*R + 0.587*G + 0.114*B
+    // Using bit shifts for faster multiplication approximation
+    const gray = (data[i] * 77 + data[i + 1] * 150 + data[i + 2] * 29) >> 8;
+    data[i] = gray;
+    data[i + 1] = gray;
+    data[i + 2] = gray;
+    // Alpha channel (data[i + 3]) remains unchanged
   }
   return imageData;
 };
@@ -28,11 +35,15 @@ export const getCameraIdWithFlash = async () => {
       const videoTrack = stream.getVideoTracks()[0];
       const capabilities = videoTrack.getCapabilities();
       if (capabilities.torch) {
-        stream.getTracks().forEach((track) => track.stop());
+        stream.getTracks().forEach((track) => {
+          track.stop();
+        });
         return device.deviceId;
       }
-      stream.getTracks().forEach((track) => track.stop());
-    } catch (error) {
+      stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    } catch {
       // Ignore errors for unavailable devices
     }
   }
