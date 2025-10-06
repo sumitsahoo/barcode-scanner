@@ -5,7 +5,9 @@
  * @param {string} className - Additional Tailwind or custom classes
  * @param {object} props - Other props passed to the SVG
  */
-/** biome-ignore-all lint/nursery/useUniqueElementIds: This is just an SVG, unique ID is not needed */
+
+import { useId } from 'react';
+
 const IconTorchOff = ({ className = "", ...props }) => (
   <svg
     viewBox="0 0 24 24"
@@ -15,13 +17,9 @@ const IconTorchOff = ({ className = "", ...props }) => (
     {...props}
   >
     <title>Torch Off Icon</title>
-    <g id="SVGRepo_bgCarrier" strokeWidth="0" />
-    <g
-      id="SVGRepo_tracerCarrier"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <g id="SVGRepo_iconCarrier">
+    <g id={useId()} strokeWidth="0" />
+    <g id={useId()} strokeLinecap="round" strokeLinejoin="round" />
+    <g id={useId()}>
       <path
         d="M9.18005 18.04V20.48C9.18005 22.16 10.0901 22.5 11.2001 21.24L18.7701 12.64C19.7001 11.59 19.3101 10.72 17.9001 10.72H16.9701"
         stroke="currentColor"

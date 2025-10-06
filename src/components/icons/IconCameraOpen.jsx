@@ -5,7 +5,9 @@
  * @param {string} className - Additional Tailwind or custom classes
  * @param {object} props - Other props passed to the SVG
  */
-/** biome-ignore-all lint/nursery/useUniqueElementIds: This is just an SVG, unique ID is not needed */
+
+import { useId } from 'react';
+
 const IconCameraOpen = ({ className = "", ...props }) => (
   <svg
     viewBox="0 0 24 24"
@@ -15,13 +17,9 @@ const IconCameraOpen = ({ className = "", ...props }) => (
     {...props}
   >
     <title>Camera Open Icon</title>
-    <g id="SVGRepo_bgCarrier" strokeWidth="0" />
-    <g
-      id="SVGRepo_tracerCarrier"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <g id="SVGRepo_iconCarrier">
+    <g id={useId()} strokeWidth="0" />
+    <g id={useId()} strokeLinecap="round" strokeLinejoin="round" />
+    <g id={useId()}>
       <path
         d="M12 16C13.6569 16 15 14.6569 15 13C15 11.3431 13.6569 10 12 10C10.3431 10 9 11.3431 9 13C9 14.6569 10.3431 16 12 16Z"
         stroke="currentColor"
