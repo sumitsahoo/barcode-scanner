@@ -102,7 +102,7 @@ const App = () => {
   );
 
   return (
-    <div className="App">
+    <div className="App h-dvh w-full overflow-hidden">
       <Particles options={options} init={particlesLoaded} />
       <BarcodeScanner />
     </div>
