@@ -160,7 +160,7 @@ const useBarcodeScanner = () => {
 
             handleStopScan();
             window?.navigator?.vibrate?.(VIBRATION_DURATION_MS);
-            audioRef.current?.play().catch(() => { });
+            audioRef.current?.play().catch(() => {});
           } else {
             animationFrameId.current = requestAnimationFrame(scanTick);
           }
