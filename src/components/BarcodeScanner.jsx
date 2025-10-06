@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   convertToGrayscale,
   getMediaConstraints,
@@ -11,7 +18,18 @@ import IconRotateCamera from "./icons/IconRotateCamera";
 import IconTorchOff from "./icons/IconTorchOff";
 import IconTorchOn from "./icons/IconTorchOn";
 
-// Custom hook for scanning logic and camera state
+// Constants
+const SCAN_INTERVAL_MS = 100;
+const VIBRATION_DURATION_MS = 300;
+const CANVAS_CONTEXT_OPTIONS = {
+  willReadFrequently: true,
+  alpha: false,
+};
+
+/**
+ * Custom hook for barcode scanning logic and camera state management
+ * Handles video stream, barcode detection, and camera controls
+ */
 const useBarcodeScanner = () => {
   const [scanState, setScanState] = useState({
     isScanning: false,
@@ -20,103 +38,33 @@ const useBarcodeScanner = () => {
     showDialog: false,
     data: { typeName: "", scanData: "" },
   });
+  // Refs for DOM elements and scanning state
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const audioRef = useRef(null);
+  const contextRef = useRef(null);
+
+  // Refs for scanning control
   const animationFrameId = useRef(null);
   const scanImageDataRef = useRef(null);
-  const SCAN_INTERVAL = 100; // Reduced from 150ms for faster scanning
   const lastScanTimeRef = useRef(0);
   const isScanningRef = useRef(scanState.isScanning);
-  const contextRef = useRef(null);
 
   useEffect(() => {
     isScanningRef.current = scanState.isScanning;
   }, [scanState.isScanning]);
 
-  const handleError = (error) => {
-    console.error("Error:", error);
+  /**
+   * Handle errors during scanning or camera operations
+   */
+  const handleError = useCallback((error) => {
+    console.error("Scanner Error:", error);
     setScanState((prev) => ({ ...prev, isScanning: false, data: null }));
-  };
+  }, []);
 
-  const handleScan = async () => {
-    setScanState((prev) => ({ ...prev, data: null, isScanning: true }));
-    try {
-      if (!scanImageDataRef.current) {
-        const zbar = await import("@undecaf/zbar-wasm");
-        scanImageDataRef.current = zbar.scanImageData;
-      }
-      const scanImageData = scanImageDataRef.current;
-      const mediaConstraints = await getMediaConstraints(scanState.facingMode);
-      const stream =
-        await navigator.mediaDevices.getUserMedia(mediaConstraints);
-      videoRef.current.srcObject = stream;
-
-      // Wait for video to be ready before starting scan loop
-      await videoRef.current.play();
-
-      const canvas = canvasRef.current;
-      // Reuse context if already created
-      if (!contextRef.current) {
-        contextRef.current = canvas.getContext("2d", {
-          willReadFrequently: true,
-          alpha: false // Performance optimization - we don't need alpha channel
-        });
-      }
-      const context = contextRef.current;
-
-      const width = videoRef.current.videoWidth;
-      const height = videoRef.current.videoHeight;
-      canvas.width = width;
-      canvas.height = height;
-
-      const tick = async () => {
-        if (!isScanningRef.current) {
-          return;
-        }
-        const now = Date.now();
-        if (now - lastScanTimeRef.current < SCAN_INTERVAL) {
-          animationFrameId.current = requestAnimationFrame(tick);
-          return;
-        }
-        lastScanTimeRef.current = now;
-
-        try {
-          context.drawImage(videoRef.current, 0, 0, width, height);
-          const imageData = context.getImageData(0, 0, width, height);
-          const grayscaleImageData = convertToGrayscale(imageData);
-          const results = await scanImageData(grayscaleImageData);
-
-          if (results && results.length > 0) {
-            // Stop scanning immediately to prevent duplicate scans
-            isScanningRef.current = false;
-
-            setScanState((prev) => ({
-              ...prev,
-              isScanning: false,
-              data: {
-                typeName: results[0]?.typeName.replace("ZBAR_", ""),
-                scanData: results[0]?.decode(),
-              },
-              showDialog: true,
-            }));
-            handleStopScan();
-            window?.navigator?.vibrate?.(300);
-            audioRef.current?.play().catch(() => { }); // Ignore audio play errors
-          } else {
-            animationFrameId.current = requestAnimationFrame(tick);
-          }
-        } catch (err) {
-          console.error("Error during scan tick:", err);
-          animationFrameId.current = requestAnimationFrame(tick);
-        }
-      };
-      animationFrameId.current = requestAnimationFrame(tick);
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
+  /**
+   * Stop scanning and cleanup resources
+   */
   const handleStopScan = useCallback(() => {
     isScanningRef.current = false;
     setScanState((prev) => ({ ...prev, isScanning: false, isTorchOn: false }));
@@ -127,7 +75,7 @@ const useBarcodeScanner = () => {
     }
 
     if (videoRef.current) {
-      videoRef.current.pause(); // Pause video to free resources
+      videoRef.current.pause();
       if (videoRef.current.srcObject) {
         stopAllTracks(videoRef.current.srcObject);
         videoRef.current.srcObject = null;
@@ -135,77 +83,185 @@ const useBarcodeScanner = () => {
     }
   }, []);
 
-  const handleSwitchCamera = async () => {
+  /**
+   * Initialize and start the barcode scanning process
+   */
+  const handleScan = useCallback(async () => {
+    setScanState((prev) => ({ ...prev, data: null, isScanning: true }));
+
+    try {
+      // Lazy load zbar library
+      if (!scanImageDataRef.current) {
+        const zbar = await import("@undecaf/zbar-wasm");
+        scanImageDataRef.current = zbar.scanImageData;
+      }
+
+      const scanImageData = scanImageDataRef.current;
+      const mediaConstraints = await getMediaConstraints(scanState.facingMode);
+      const stream =
+        await navigator.mediaDevices.getUserMedia(mediaConstraints);
+
+      if (!videoRef.current) return;
+      videoRef.current.srcObject = stream;
+      await videoRef.current.play();
+
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      // Reuse context for better performance
+      if (!contextRef.current) {
+        contextRef.current = canvas.getContext("2d", CANVAS_CONTEXT_OPTIONS);
+      }
+      const context = contextRef.current;
+
+      const width = videoRef.current.videoWidth;
+      const height = videoRef.current.videoHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      /**
+       * Animation loop for continuous barcode scanning
+       */
+      const scanTick = async () => {
+        if (!isScanningRef.current) return;
+
+        const now = Date.now();
+        const timeSinceLastScan = now - lastScanTimeRef.current;
+
+        if (timeSinceLastScan < SCAN_INTERVAL_MS) {
+          animationFrameId.current = requestAnimationFrame(scanTick);
+          return;
+        }
+
+        lastScanTimeRef.current = now;
+
+        try {
+          if (!videoRef.current || !context) return;
+
+          context.drawImage(videoRef.current, 0, 0, width, height);
+          const imageData = context.getImageData(0, 0, width, height);
+          const grayscaleImageData = convertToGrayscale(imageData);
+          const results = await scanImageData(grayscaleImageData);
+
+          if (results?.length > 0) {
+            isScanningRef.current = false;
+
+            const barcodeData = {
+              typeName: results[0]?.typeName?.replace("ZBAR_", "") ?? "",
+              scanData: results[0]?.decode() ?? "",
+            };
+
+            setScanState((prev) => ({
+              ...prev,
+              isScanning: false,
+              data: barcodeData,
+              showDialog: true,
+            }));
+
+            handleStopScan();
+            window?.navigator?.vibrate?.(VIBRATION_DURATION_MS);
+            audioRef.current?.play().catch(() => { });
+          } else {
+            animationFrameId.current = requestAnimationFrame(scanTick);
+          }
+        } catch (err) {
+          console.error("Scan tick error:", err);
+          animationFrameId.current = requestAnimationFrame(scanTick);
+        }
+      };
+
+      animationFrameId.current = requestAnimationFrame(scanTick);
+    } catch (error) {
+      handleError(error);
+    }
+  }, [scanState.facingMode, handleError, handleStopScan]);
+
+  /**
+   * Switch between front and back cameras
+   */
+  const handleSwitchCamera = useCallback(async () => {
     if (!videoRef.current || !isScanningRef.current) return;
 
     const newFacingMode =
       scanState.facingMode === "user" ? "environment" : "user";
 
     try {
-      // Stop current stream
       if (videoRef.current.srcObject) {
         stopAllTracks(videoRef.current.srcObject);
       }
 
       const mediaConstraints = await getMediaConstraints(newFacingMode);
-      const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+      const stream =
+        await navigator.mediaDevices.getUserMedia(mediaConstraints);
       videoRef.current.srcObject = stream;
-
-      // Wait for video to be ready
       await videoRef.current.play();
 
-      // Update canvas dimensions if they changed
       const canvas = canvasRef.current;
-      const width = videoRef.current.videoWidth;
-      const height = videoRef.current.videoHeight;
-      canvas.width = width;
-      canvas.height = height;
+      if (canvas) {
+        canvas.width = videoRef.current.videoWidth;
+        canvas.height = videoRef.current.videoHeight;
+      }
 
       setScanState((prev) => ({
         ...prev,
         facingMode: newFacingMode,
-        isTorchOn: false // Reset torch when switching cameras
+        isTorchOn: false,
       }));
     } catch (error) {
-      console.error("Error switching camera:", error);
+      console.error("Camera switch error:", error);
       handleError(error);
     }
-  };
+  }, [scanState.facingMode, handleError]);
 
-  const handleToggleTorch = async () => {
-    if (!videoRef.current) return;
-    const tracks = videoRef.current.srcObject?.getVideoTracks();
-    if (tracks && tracks.length > 0) {
-      const track = tracks[0];
-      const capabilities = track.getCapabilities();
-      if (!capabilities.torch) {
-        console.warn("Torch not supported on this device");
-        return;
-      }
-      try {
-        const newTorchState = !scanState.isTorchOn;
-        await track.applyConstraints({
-          advanced: [{ torch: newTorchState }],
-        });
-        setScanState((prev) => ({ ...prev, isTorchOn: newTorchState }));
-      } catch (error) {
-        console.error("Error toggling torch:", error);
-      }
+  /**
+   * Toggle the camera torch/flashlight
+   */
+  const handleToggleTorch = useCallback(async () => {
+    if (!videoRef.current?.srcObject) return;
+
+    const tracks = videoRef.current.srcObject.getVideoTracks();
+    if (!tracks?.length) return;
+
+    const track = tracks[0];
+    const capabilities = track.getCapabilities();
+
+    if (!capabilities.torch) {
+      console.warn("Torch not supported on this device");
+      return;
     }
-  };
 
-  const handleDataCopy = async () => {
+    try {
+      const newTorchState = !scanState.isTorchOn;
+      await track.applyConstraints({
+        advanced: [{ torch: newTorchState }],
+      });
+      setScanState((prev) => ({ ...prev, isTorchOn: newTorchState }));
+    } catch (error) {
+      console.error("Torch toggle error:", error);
+    }
+  }, [scanState.isTorchOn]);
+
+  /**
+   * Copy scanned barcode data to clipboard
+   */
+  const handleDataCopy = useCallback(async () => {
     if (!scanState.data?.scanData) return;
+
     try {
       await navigator.clipboard.writeText(scanState.data.scanData);
     } catch (error) {
-      console.error("Error copying to clipboard:", error);
+      console.error("Clipboard copy error:", error);
     }
-    setScanState((prev) => ({ ...prev, showDialog: false }));
-  };
 
-  const handleShowDialog = () =>
+    setScanState((prev) => ({ ...prev, showDialog: false }));
+  }, [scanState.data?.scanData]);
+
+  /**
+   * Toggle the result dialog visibility
+   */
+  const handleShowDialog = useCallback(() => {
     setScanState((prev) => ({ ...prev, showDialog: !prev.showDialog }));
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -259,6 +315,18 @@ const BarcodeScanner = () => {
   } = useBarcodeScanner();
 
   const { isScanning, facingMode, isTorchOn, showDialog, data } = scanState;
+  const dialogTitleId = useId();
+
+  // Computed values for conditional rendering
+  const isPhoneDevice = useMemo(() => isPhone(), []);
+  const shouldShowRotateButton = useMemo(
+    () => isScanning && isPhoneDevice,
+    [isScanning, isPhoneDevice],
+  );
+  const shouldShowTorchButton = useMemo(
+    () => isScanning && isPhoneDevice && facingMode === "environment",
+    [isScanning, isPhoneDevice, facingMode],
+  );
 
   return (
     <div className="relative w-full h-dvh grid grid-cols-1 gap-6 place-items-center overflow-hidden backdrop-blur-none">
@@ -284,17 +352,22 @@ const BarcodeScanner = () => {
         />
       )}
       <div className="absolute bottom-8 flex justify-center items-center rounded-full border border-secondary bg-white/30 shadow-lg shadow-black/10 saturate-200 backdrop-blur-xl z-30 p-2">
-        <button
-          type="button"
-          className={`btn btn-circle btn-outline btn-secondary mr-2 ${!isScanning || !isPhone() ? "hidden" : ""}`}
-          onClick={handleSwitchCamera}
-        >
-          <IconRotateCamera className="w-8 h-8 text-secondary" />
-        </button>
+        {shouldShowRotateButton && (
+          <button
+            type="button"
+            className="btn btn-circle btn-outline btn-secondary mr-2"
+            onClick={handleSwitchCamera}
+            aria-label="Switch camera"
+          >
+            <IconRotateCamera className="w-8 h-8 text-secondary" />
+          </button>
+        )}
+
         <button
           type="button"
           className="btn btn-circle btn-primary"
           onClick={isScanning ? handleStopScan : handleScan}
+          aria-label={isScanning ? "Stop scanning" : "Start scanning"}
         >
           {isScanning ? (
             <IconCameraClosed className="w-8 h-8 text-primary-content" />
@@ -302,31 +375,39 @@ const BarcodeScanner = () => {
             <IconCameraOpen className="w-8 h-8 text-primary-content" />
           )}
         </button>
-        <button
-          type="button"
-          className={`btn btn-circle btn-outline btn-secondary ml-2 ${!isScanning || !isPhone() || facingMode !== "environment"
-            ? "hidden"
-            : ""
-            }`}
-          onClick={handleToggleTorch}
-        >
-          {isTorchOn ? (
-            <IconTorchOff className="w-8 h-8 text-secondary" />
-          ) : (
-            <IconTorchOn className="w-8 h-8 text-secondary" />
-          )}
-        </button>
+
+        {shouldShowTorchButton && (
+          <button
+            type="button"
+            className="btn btn-circle btn-outline btn-secondary ml-2"
+            onClick={handleToggleTorch}
+            aria-label={isTorchOn ? "Turn off torch" : "Turn on torch"}
+          >
+            {isTorchOn ? (
+              <IconTorchOff className="w-8 h-8 text-secondary" />
+            ) : (
+              <IconTorchOn className="w-8 h-8 text-secondary" />
+            )}
+          </button>
+        )}
       </div>
-      {data && (
-        <div className={`modal ${showDialog ? "modal-open" : ""}`}>
+      {data?.scanData && (
+        <div
+          className={`modal ${showDialog ? "modal-open" : ""}`}
+          role="dialog"
+          aria-labelledby={dialogTitleId}
+        >
           <div className="modal-box">
-            <h3 className="font-bold text-lg">{data.typeName}</h3>
-            <p className="py-4">{data.scanData}</p>
+            <h3 id={dialogTitleId} className="font-bold text-lg">
+              {data.typeName}
+            </h3>
+            <p className="py-4 break-all">{data.scanData}</p>
             <div className="modal-action">
               <button
                 type="button"
                 className="btn btn-outline mr-2"
                 onClick={handleDataCopy}
+                aria-label="Copy barcode data to clipboard"
               >
                 COPY
               </button>
@@ -334,6 +415,7 @@ const BarcodeScanner = () => {
                 type="button"
                 className="btn btn-primary"
                 onClick={handleShowDialog}
+                aria-label="Close dialog"
               >
                 CLOSE
               </button>
