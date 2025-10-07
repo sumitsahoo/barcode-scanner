@@ -2,34 +2,59 @@
 dist
 dev-dist
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
 # macOS
 .DS_STORE
 
-# Others
+# IDE
+.vscode
+.idea
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
 node_modules
-scripts/flow/*/.flowconfig
-.flowconfig
+
+# Testing
+coverage/
+*.lcov
+
+# Build artifacts
+build/
+dist-ssr/
+
+# Temporary files
 *~
-*.pyc
+*.swp
+*.swo
+*.tmp
+
+# Others
+.module-cache
 .grunt
 _SpecRunner.html
 __benchmarks__
-build/
 remote-repo/
-coverage/
-.module-cache
+chrome-user-data
 fixtures/dom/public/react-dom.js
 fixtures/dom/public/react.js
 test/the-files-to-test.generated.js
-*.log*
-chrome-user-data
-*.sublime-project
-*.sublime-workspace
-.idea
-*.iml
-.vscode
-*.swp
-*.swo
+*.pyc
+scripts/flow/*/.flowconfig
+.flowconfig
 
 packages/react-devtools-core/dist
 packages/react-devtools-extensions/chrome/build
