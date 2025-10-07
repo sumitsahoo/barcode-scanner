@@ -5,77 +5,77 @@
 /* Primary: #8bd5ca, Secondary: #a6da95 */
 
 @plugin "daisyui/theme" {
-  name: "customtheme";
-  default: true;
-  prefersdark: false;
-  color-scheme: light;
+	name: "customtheme";
+	default: true;
+	prefersdark: false;
+	color-scheme: light;
 
-  --color-base-100: #ffffff;
-  --color-base-200: #f3f4f6;
-  --color-base-300: #e5e7eb;
-  --color-base-content: #537f79;
-  --color-primary: #8bd5ca;
-  --color-primary-content: #537f79;
-  --color-secondary: #a6da95;
-  --color-secondary-content: #537f79;
-  --color-accent: #37cdbe;
-  --color-accent-content: #ffffff;
-  --color-neutral: #3d4451;
-  --color-neutral-content: #ffffff;
-  --color-info: #2094f3;
-  --color-info-content: #ffffff;
-  --color-success: #009485;
-  --color-success-content: #ffffff;
-  --color-warning: #ff9900;
-  --color-warning-content: #ffffff;
-  --color-error: #ff5724;
-  --color-error-content: #ffffff;
+	--color-base-100: #ffffff;
+	--color-base-200: #f3f4f6;
+	--color-base-300: #e5e7eb;
+	--color-base-content: #537f79;
+	--color-primary: #8bd5ca;
+	--color-primary-content: #537f79;
+	--color-secondary: #a6da95;
+	--color-secondary-content: #537f79;
+	--color-accent: #37cdbe;
+	--color-accent-content: #ffffff;
+	--color-neutral: #3d4451;
+	--color-neutral-content: #ffffff;
+	--color-info: #2094f3;
+	--color-info-content: #ffffff;
+	--color-success: #009485;
+	--color-success-content: #ffffff;
+	--color-warning: #ff9900;
+	--color-warning-content: #ffffff;
+	--color-error: #ff5724;
+	--color-error-content: #ffffff;
 
-  --radius-selector: 1rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
-  --size-selector: 0.25rem;
-  --size-field: 0.25rem;
-  --border: 1px;
-  --depth: 1;
-  --noise: 0;
+	--radius-selector: 1rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.5rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 1px;
+	--depth: 1;
+	--noise: 0;
 }
 
 @plugin "daisyui/theme" {
-  name: "customtheme-dark";
-  default: false;
-  prefersdark: true;
-  color-scheme: dark;
+	name: "customtheme-dark";
+	default: false;
+	prefersdark: true;
+	color-scheme: dark;
 
-  --color-base-100: #1a2223;
-  --color-base-200: #232a2e;
-  --color-base-300: #2c3333;
-  --color-base-content: #e0f2f1;
-  --color-primary: #8bd5ca;
-  --color-primary-content: #1a2223;
-  --color-secondary: #a6da95;
-  --color-secondary-content: #1a2223;
-  --color-accent: #37cdbe;
-  --color-accent-content: #1a2223;
-  --color-neutral: #3d4451;
-  --color-neutral-content: #e0f2f1;
-  --color-info: #2094f3;
-  --color-info-content: #e0f2f1;
-  --color-success: #009485;
-  --color-success-content: #e0f2f1;
-  --color-warning: #ff9900;
-  --color-warning-content: #e0f2f1;
-  --color-error: #ff5724;
-  --color-error-content: #e0f2f1;
+	--color-base-100: #1a2223;
+	--color-base-200: #232a2e;
+	--color-base-300: #2c3333;
+	--color-base-content: #e0f2f1;
+	--color-primary: #8bd5ca;
+	--color-primary-content: #1a2223;
+	--color-secondary: #a6da95;
+	--color-secondary-content: #1a2223;
+	--color-accent: #37cdbe;
+	--color-accent-content: #1a2223;
+	--color-neutral: #3d4451;
+	--color-neutral-content: #e0f2f1;
+	--color-info: #2094f3;
+	--color-info-content: #e0f2f1;
+	--color-success: #009485;
+	--color-success-content: #e0f2f1;
+	--color-warning: #ff9900;
+	--color-warning-content: #e0f2f1;
+	--color-error: #ff5724;
+	--color-error-content: #e0f2f1;
 
-  --radius-selector: 1rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
-  --size-selector: 0.25rem;
-  --size-field: 0.25rem;
-  --border: 1px;
-  --depth: 1;
-  --noise: 0;
+	--radius-selector: 1rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.5rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 1px;
+	--depth: 1;
+	--noise: 0;
 }
 
 /*
@@ -87,56 +87,56 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
-  }
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentColor);
+	}
 
-  /* Prevent scrolling on the entire page */
-  html,
-  body {
-    overflow: hidden;
-    height: 100dvh;
-    margin: 0;
-    padding: 0;
-  }
+	/* Prevent scrolling on the entire page */
+	html,
+	body {
+		overflow: hidden;
+		height: 100dvh;
+		margin: 0;
+		padding: 0;
+	}
 
-  #root {
-    height: 100dvh;
-    overflow: hidden;
-  }
+	#root {
+		height: 100dvh;
+		overflow: hidden;
+	}
 }
 
 /* Barcode scanning animation - optimized for smooth 60fps performance */
 @utility animate-scan {
-  /* Custom cubic-bezier for smoother, more natural easing than ease-in-out */
-  animation: scan 2.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-  /* Hint to browser to optimize this property for animation */
-  will-change: transform;
-  /* Force GPU acceleration by creating a new composite layer */
-  transform: translateZ(0);
-  /* Prevent flickering and improve rendering performance */
-  backface-visibility: hidden;
-  /* Further optimize 3D transform rendering */
-  perspective: 1000px;
+	/* Custom cubic-bezier for smoother, more natural easing than ease-in-out */
+	animation: scan 2.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+	/* Hint to browser to optimize this property for animation */
+	will-change: transform;
+	/* Force GPU acceleration by creating a new composite layer */
+	transform: translateZ(0);
+	/* Prevent flickering and improve rendering performance */
+	backface-visibility: hidden;
+	/* Further optimize 3D transform rendering */
+	perspective: 1000px;
 }
 
 @layer utilities {
-  @keyframes scan {
-    /* Start at top (20% from viewport top, set in component) */
-    0% {
-      transform: translateY(0) translateZ(0);
-    }
-    /* Move down 60vh to stay within bounds (ends at ~80% from top) */
-    50% {
-      transform: translateY(60vh) translateZ(0);
-    }
-    /* Return to starting position */
-    100% {
-      transform: translateY(0) translateZ(0);
-    }
-  }
+	@keyframes scan {
+		/* Start at top (20% from viewport top, set in component) */
+		0% {
+			transform: translateY(0) translateZ(0);
+		}
+		/* Move down 60vh to stay within bounds (ends at ~80% from top) */
+		50% {
+			transform: translateY(60vh) translateZ(0);
+		}
+		/* Return to starting position */
+		100% {
+			transform: translateY(0) translateZ(0);
+		}
+	}
 }
