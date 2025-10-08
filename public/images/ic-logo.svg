@@ -2,15 +2,15 @@
     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
     <g id="SVGRepo_iconCarrier">
-        <path d="M8 8L8 16" stroke="#8bd5ca" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-        <path d="M12 8L12 16" stroke="#8bd5ca" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-        <path d="M16 8L16 16" stroke="#8bd5ca" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-        <path d="M8.976 21C4.05476 21 3 19.9453 3 15.024" stroke="#8bd5ca" stroke-width="2" stroke-linecap="round">
+        <path d="M8 8L8 16" stroke="#4db8a8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M12 8L12 16" stroke="#4db8a8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M16 8L16 16" stroke="#4db8a8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M8.976 21C4.05476 21 3 19.9453 3 15.024" stroke="#4db8a8" stroke-width="2" stroke-linecap="round">
         </path>
-        <path d="M20.9999 15.024C20.9999 19.9453 19.9452 21 15.0239 21" stroke="#8bd5ca" stroke-width="2"
+        <path d="M20.9999 15.024C20.9999 19.9453 19.9452 21 15.0239 21" stroke="#4db8a8" stroke-width="2"
             stroke-linecap="round"></path>
-        <path d="M15.0239 3C19.9452 3 20.9999 4.05476 20.9999 8.976" stroke="#8bd5ca" stroke-width="2"
+        <path d="M15.0239 3C19.9452 3 20.9999 4.05476 20.9999 8.976" stroke="#4db8a8" stroke-width="2"
             stroke-linecap="round"></path>
-        <path d="M3 8.976C3 4.05476 4.05476 3 8.976 3" stroke="#8bd5ca" stroke-width="2" stroke-linecap="round"></path>
+        <path d="M3 8.976C3 4.05476 4.05476 3 8.976 3" stroke="#4db8a8" stroke-width="2" stroke-linecap="round"></path>
     </g>
 </svg>

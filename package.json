@@ -2,7 +2,7 @@
   "name": "barcode-scanner",
   "author": "Sumit Sahoo",
   "private": true,
-  "version": "1.0.6",
+  "version": "1.0.7",
   "type": "module",
   "homepage": "https://sumitsahoo.github.io/barcode-scanner",
   "scripts": {
@@ -32,7 +32,7 @@
     "@types/react-dom": "^19.2.1",
     "@vite-pwa/assets-generator": "^1.0.1",
     "@vitejs/plugin-react": "^5.0.4",
-    "daisyui": "^5.1.27",
+    "daisyui": "^5.1.29",
     "gh-pages": "^6.3.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.14",
