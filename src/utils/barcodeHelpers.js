@@ -44,47 +44,104 @@ export const convertToGrayscale = (imageData) => {
 };
 
 /**
- * Find the camera device ID that supports torch/flash functionality
- * @returns {Promise<string|null>} Device ID with flash support or null
+ * Determine the best rear camera for scanning based on various criteria
+ * Prioritizes: main/wide camera > torch support > highest resolution
+ * Works across Android and iOS devices with multiple cameras
+ * @returns {Promise<string|null>} Device ID of the best rear camera or null
  */
-export const getCameraIdWithFlash = async () => {
+export const getBestRearCamera = async () => {
 	const devices = await navigator.mediaDevices.enumerateDevices();
-	for (const device of devices) {
-		const constraints = {
-			video: {
-				deviceId: device.deviceId,
-				facingMode: FACING_MODE.ENVIRONMENT,
-			},
-		};
+	const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+	if (videoDevices.length === 0) return null;
+
+	let bestCamera = null;
+	let bestScore = -1;
+
+	for (const device of videoDevices) {
 		try {
-			const stream = await navigator.mediaDevices.getUserMedia(constraints);
+			const stream = await navigator.mediaDevices.getUserMedia({
+				video: { deviceId: { exact: device.deviceId } }
+			});
+
 			const videoTrack = stream.getVideoTracks()[0];
 			const capabilities = videoTrack.getCapabilities();
-			if (capabilities.torch) {
-				stream.getTracks().forEach((track) => {
-					track.stop();
-				});
-				return device.deviceId;
-			}
-			stream.getTracks().forEach((track) => {
+			const settings = videoTrack.getSettings();
+
+			// Stop the stream immediately
+			for (const track of stream.getTracks()) {
 				track.stop();
-			});
-		} catch {
-			// Ignore errors for unavailable devices
+			}
+
+			// Skip front-facing cameras
+			if (settings.facingMode === 'user') continue;
+
+			let score = 0;
+			const label = device.label.toLowerCase();
+
+			// Priority 1: Identify main/wide camera by label (highest priority)
+			// iOS: "back camera" or "wide" or "camera 0"
+			// Android: "camera 0" or "back camera" or "main camera"
+			if (label.includes('back camera') && !label.includes('ultra') && !label.includes('telephoto')) {
+				score += 100;
+			} else if (label.includes('wide') && !label.includes('ultra')) {
+				score += 100;
+			} else if (label.match(/camera\s*0|main/i)) {
+				score += 100;
+			}
+
+			// Priority 2: Torch/flash capability (strong indicator of main camera)
+			if (capabilities.torch) {
+				score += 50;
+			}
+
+			// Priority 3: Resolution (higher is better for scanning)
+			if (capabilities.width?.max) {
+				score += Math.min(capabilities.width.max / 100, 30); // Cap at 30 points
+			}
+
+			// Priority 4: Prefer environment facing mode
+			if (settings.facingMode === 'environment') {
+				score += 20;
+			}
+
+			// Penalty: Avoid ultra-wide and telephoto cameras
+			if (label.includes('ultra') || label.includes('telephoto') || label.includes('tele')) {
+				score -= 50;
+			}
+
+			if (score > bestScore) {
+				bestScore = score;
+				bestCamera = device.deviceId;
+			}
+		} catch (error) {
+			// Camera not accessible, skip it
+			console.warn(`Could not access camera: ${device.label}`, error);
 		}
 	}
-	return null;
+
+	return bestCamera;
 };
 
 /**
- * Get camera ID with flash support from localStorage or detect it
+ * Legacy function - Find the camera device ID that supports torch/flash functionality
+ * @deprecated Use getBestRearCamera() instead for better cross-platform support
+ * @returns {Promise<string|null>} Device ID with flash support or null
+ */
+export const getCameraIdWithFlash = async () => {
+	// Use the new improved method
+	return getBestRearCamera();
+};
+
+/**
+ * Get best rear camera ID from localStorage or detect it
  * Caches the result in localStorage for future use
- * @returns {Promise<string|null>} Cached or newly detected camera ID with flash
+ * @returns {Promise<string|null>} Cached or newly detected camera ID
  */
 export const getAndSetCameraIdWithFlash = async () => {
 	let cameraId = localStorage.getItem(STORAGE_KEY_CAMERA_ID);
 	if (!cameraId) {
-		cameraId = await getCameraIdWithFlash();
+		cameraId = await getBestRearCamera();
 		if (cameraId) {
 			localStorage.setItem(STORAGE_KEY_CAMERA_ID, cameraId);
 		}
