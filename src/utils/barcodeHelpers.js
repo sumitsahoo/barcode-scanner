@@ -51,7 +51,7 @@ export const convertToGrayscale = (imageData) => {
  */
 export const getBestRearCamera = async () => {
 	const devices = await navigator.mediaDevices.enumerateDevices();
-	const videoDevices = devices.filter(device => device.kind === 'videoinput');
+	const videoDevices = devices.filter((device) => device.kind === "videoinput");
 
 	if (videoDevices.length === 0) return null;
 
@@ -61,7 +61,7 @@ export const getBestRearCamera = async () => {
 	for (const device of videoDevices) {
 		try {
 			const stream = await navigator.mediaDevices.getUserMedia({
-				video: { deviceId: { exact: device.deviceId } }
+				video: { deviceId: { exact: device.deviceId } },
 			});
 
 			const videoTrack = stream.getVideoTracks()[0];
@@ -74,7 +74,7 @@ export const getBestRearCamera = async () => {
 			}
 
 			// Skip front-facing cameras
-			if (settings.facingMode === 'user') continue;
+			if (settings.facingMode === "user") continue;
 
 			let score = 0;
 			const label = device.label.toLowerCase();
@@ -82,9 +82,13 @@ export const getBestRearCamera = async () => {
 			// Priority 1: Identify main/wide camera by label (highest priority)
 			// iOS: "back camera" or "wide" or "camera 0"
 			// Android: "camera 0" or "back camera" or "main camera"
-			if (label.includes('back camera') && !label.includes('ultra') && !label.includes('telephoto')) {
+			if (
+				label.includes("back camera") &&
+				!label.includes("ultra") &&
+				!label.includes("telephoto")
+			) {
 				score += 100;
-			} else if (label.includes('wide') && !label.includes('ultra')) {
+			} else if (label.includes("wide") && !label.includes("ultra")) {
 				score += 100;
 			} else if (label.match(/camera\s*0|main/i)) {
 				score += 100;
@@ -101,12 +105,16 @@ export const getBestRearCamera = async () => {
 			}
 
 			// Priority 4: Prefer environment facing mode
-			if (settings.facingMode === 'environment') {
+			if (settings.facingMode === "environment") {
 				score += 20;
 			}
 
 			// Penalty: Avoid ultra-wide and telephoto cameras
-			if (label.includes('ultra') || label.includes('telephoto') || label.includes('tele')) {
+			if (
+				label.includes("ultra") ||
+				label.includes("telephoto") ||
+				label.includes("tele")
+			) {
 				score -= 50;
 			}
 
