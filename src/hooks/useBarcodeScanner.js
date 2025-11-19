@@ -5,7 +5,6 @@ import {
 	VIBRATION_DURATION_MS,
 } from "../constants/scanner";
 import {
-	convertToGrayscale,
 	getMediaConstraints,
 	stopAllTracks,
 } from "../utils/barcodeHelpers";
@@ -44,7 +43,7 @@ export const useBarcodeScanner = () => {
 
 	// Refs for scanning control
 	const animationFrameId = useRef(null);
-	const scanImageDataRef = useRef(null);
+	const workerRef = useRef(null);
 	const lastScanTimeRef = useRef(0);
 	const isScanningRef = useRef(scanState.isScanning);
 
@@ -83,6 +82,39 @@ export const useBarcodeScanner = () => {
 		}
 	}, []);
 
+	// Initialize Web Worker
+	useEffect(() => {
+		workerRef.current = new Worker(
+			new URL("../workers/scanner.worker.js", import.meta.url),
+			{ type: "module" },
+		);
+
+		workerRef.current.onmessage = (e) => {
+			const { found, data, error } = e.data;
+
+			if (found) {
+				isScanningRef.current = false;
+
+				setScanState((prev) => ({
+					...prev,
+					isScanning: false,
+					data: data,
+					showDialog: true,
+				}));
+
+				handleStopScan();
+				window?.navigator?.vibrate?.(VIBRATION_DURATION_MS);
+				audioRef.current?.play().catch(() => { });
+			} else if (error) {
+				console.error("Worker error:", error);
+			}
+		};
+
+		return () => {
+			workerRef.current?.terminate();
+		};
+	}, [handleStopScan]);
+
 	/**
 	 * Initialize and start the barcode scanning process
 	 */
@@ -90,13 +122,6 @@ export const useBarcodeScanner = () => {
 		setScanState((prev) => ({ ...prev, data: null, isScanning: true }));
 
 		try {
-			// Lazy load zbar library
-			if (!scanImageDataRef.current) {
-				const zbar = await import("@undecaf/zbar-wasm");
-				scanImageDataRef.current = zbar.scanImageData;
-			}
-
-			const scanImageData = scanImageDataRef.current;
 			const mediaConstraints = await getMediaConstraints(scanState.facingMode);
 			const stream =
 				await navigator.mediaDevices.getUserMedia(mediaConstraints);
@@ -149,30 +174,16 @@ export const useBarcodeScanner = () => {
 					// Draw video frame to canvas with scaling
 					context.drawImage(videoRef.current, 0, 0, scanWidth, scanHeight);
 					const imageData = context.getImageData(0, 0, scanWidth, scanHeight);
-					const grayscaleImageData = convertToGrayscale(imageData);
-					const results = await scanImageData(grayscaleImageData);
 
-					if (results?.length > 0) {
-						isScanningRef.current = false;
+					// Offload processing to worker
+					// Transfer buffer to avoid copying (zero-copy transfer)
+					workerRef.current.postMessage(
+						{ imageData, type: "scan" },
+						[imageData.data.buffer]
+					);
 
-						const barcodeData = {
-							typeName: results[0]?.typeName?.replace("ZBAR_", "") ?? "",
-							scanData: results[0]?.decode() ?? "",
-						};
-
-						setScanState((prev) => ({
-							...prev,
-							isScanning: false,
-							data: barcodeData,
-							showDialog: true,
-						}));
-
-						handleStopScan();
-						window?.navigator?.vibrate?.(VIBRATION_DURATION_MS);
-						audioRef.current?.play().catch(() => { });
-					} else {
-						animationFrameId.current = requestAnimationFrame(scanTick);
-					}
+					// Continue loop - worker will message back if found
+					animationFrameId.current = requestAnimationFrame(scanTick);
 				} catch (err) {
 					console.error("Scan tick error:", err);
 					animationFrameId.current = requestAnimationFrame(scanTick);
@@ -183,7 +194,7 @@ export const useBarcodeScanner = () => {
 		} catch (error) {
 			handleError(error);
 		}
-	}, [scanState.facingMode, handleError, handleStopScan]);
+	}, [scanState.facingMode, handleError]);
 
 	/**
 	 * Switch between front and back cameras
