@@ -32,18 +32,16 @@ const ScannerControls = ({
 }) => {
 	return (
 		<div
-			className={`absolute bottom-8 flex justify-center items-center z-30 transition-all duration-300 rounded-full ${
-				isScanning
-					? "bg-black/50 border border-white/10 shadow-lg backdrop-blur-md px-6 py-4"
-					: "bg-transparent border-transparent px-0 py-0"
-			}`}
+			className={`absolute bottom-8 flex justify-center items-center z-30 transition-all duration-300 rounded-full ${isScanning
+				? "bg-black/50 border border-white/10 shadow-lg backdrop-blur-md px-4 py-2 md:p-2"
+				: "bg-transparent border-transparent px-0 py-0"
+				}`}
 		>
 			<div
-				className={`flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out ${
-					shouldShowRotateButton
-						? "w-14 h-14 opacity-100 scale-100 mr-6"
-						: "w-0 h-0 opacity-0 scale-0 mr-0"
-				}`}
+				className={`flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out ${shouldShowRotateButton
+					? "w-12 h-12 opacity-100 scale-100 mr-2"
+					: "w-0 h-0 opacity-0 scale-0 mr-0"
+					}`}
 			>
 				<div className="md:tooltip md:tooltip-top" data-tip="Switch Camera">
 					<button
@@ -64,28 +62,26 @@ const ScannerControls = ({
 			>
 				<button
 					type="button"
-					className={`btn btn-circle shadow-xl border-4 active:scale-95 transition-all duration-300 ${
-						isScanning
-							? "w-16 h-16 md:w-20 md:h-20 btn-error border-white/30 text-white"
-							: "w-20 h-20 md:w-24 md:h-24 btn-primary border-white/20 text-primary-content shadow-primary/40 hover:scale-105 hover:shadow-primary/60"
-					}`}
+					className={`btn btn-circle shadow-xl border-4 active:scale-95 transition-all duration-300 ${isScanning
+						? "w-14 h-14 md:w-16 md:h-16 btn-error border-white/30 text-white"
+						: "w-16 h-16 md:w-20 md:h-20 btn-primary border-white/20 text-primary-content shadow-primary/40 hover:scale-105 hover:shadow-primary/60"
+						}`}
 					onClick={isScanning ? onStopScan : onScan}
 					aria-label={isScanning ? "Stop scanning" : "Start scanning"}
 				>
 					{isScanning ? (
-						<IconCameraClosed className="w-8 h-8 md:w-10 md:h-10" />
+						<IconCameraClosed className="w-8 h-8 md:w-8 md:h-8" />
 					) : (
-						<IconCameraOpen className="w-8 h-8 md:w-10 md:h-10" />
+						<IconCameraOpen className="w-8 h-8 md:w-8 md:h-8" />
 					)}
 				</button>
 			</div>
 
 			<div
-				className={`flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out ${
-					shouldShowTorchButton
-						? "w-14 h-14 opacity-100 scale-100 ml-6"
-						: "w-0 h-0 opacity-0 scale-0 ml-0"
-				}`}
+				className={`flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out ${shouldShowTorchButton
+					? "w-12 h-12 opacity-100 scale-100 ml-2"
+					: "w-0 h-0 opacity-0 scale-0 ml-0"
+					}`}
 			>
 				<div
 					className="md:tooltip md:tooltip-top"
