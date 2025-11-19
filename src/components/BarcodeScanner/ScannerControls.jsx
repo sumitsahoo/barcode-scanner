@@ -38,45 +38,57 @@ const ScannerControls = ({
 				}`}
 		>
 			{shouldShowRotateButton && (
-				<button
-					type="button"
-					className="btn btn-circle w-10 h-10 bg-white/10 border-none text-white hover:bg-white/20 active:scale-90 transition-all duration-200"
-					onClick={onSwitchCamera}
-					aria-label="Switch camera"
-				>
-					<IconRotateCamera className="w-6 h-6" />
-				</button>
+				<div className="md:tooltip md:tooltip-top" data-tip="Switch Camera">
+					<button
+						type="button"
+						className="btn btn-circle w-10 h-10 bg-white/10 border-none text-white hover:bg-white/20 active:scale-90 transition-all duration-200"
+						onClick={onSwitchCamera}
+						aria-label="Switch camera"
+					>
+						<IconRotateCamera className="w-6 h-6" />
+					</button>
+				</div>
 			)}
 
-			<button
-				type="button"
-				className={`btn btn-circle shadow-xl border-4 active:scale-95 transition-all duration-300 ${isScanning
-					? "w-16 h-16 md:w-20 md:h-20 btn-error border-white/30 text-white"
-					: "w-20 h-20 md:w-24 md:h-24 btn-primary border-white/20 text-primary-content shadow-primary/40 hover:scale-105 hover:shadow-primary/60"
-					}`}
-				onClick={isScanning ? onStopScan : onScan}
-				aria-label={isScanning ? "Stop scanning" : "Start scanning"}
+			<div
+				className="md:tooltip md:tooltip-top"
+				data-tip={isScanning ? "Stop Scanning" : "Start Scanning"}
 			>
-				{isScanning ? (
-					<IconCameraClosed className="w-8 h-8 md:w-10 md:h-10" />
-				) : (
-					<IconCameraOpen className="w-8 h-8 md:w-10 md:h-10" />
-				)}
-			</button>
-
-			{shouldShowTorchButton && (
 				<button
 					type="button"
-					className="btn btn-circle w-10 h-10 bg-white/10 border-none text-white hover:bg-white/20 active:scale-90 transition-all duration-200"
-					onClick={onToggleTorch}
-					aria-label={isTorchOn ? "Turn off torch" : "Turn on torch"}
+					className={`btn btn-circle shadow-xl border-4 active:scale-95 transition-all duration-300 ${isScanning
+						? "w-16 h-16 md:w-20 md:h-20 btn-error border-white/30 text-white"
+						: "w-20 h-20 md:w-24 md:h-24 btn-primary border-white/20 text-primary-content shadow-primary/40 hover:scale-105 hover:shadow-primary/60"
+						}`}
+					onClick={isScanning ? onStopScan : onScan}
+					aria-label={isScanning ? "Stop scanning" : "Start scanning"}
 				>
-					{isTorchOn ? (
-						<IconTorchOff className="w-6 h-6" />
+					{isScanning ? (
+						<IconCameraClosed className="w-8 h-8 md:w-10 md:h-10" />
 					) : (
-						<IconTorchOn className="w-6 h-6" />
+						<IconCameraOpen className="w-8 h-8 md:w-10 md:h-10" />
 					)}
 				</button>
+			</div>
+
+			{shouldShowTorchButton && (
+				<div
+					className="md:tooltip md:tooltip-top"
+					data-tip={isTorchOn ? "Turn Off" : "Turn On"}
+				>
+					<button
+						type="button"
+						className="btn btn-circle w-10 h-10 bg-white/10 border-none text-white hover:bg-white/20 active:scale-90 transition-all duration-200"
+						onClick={onToggleTorch}
+						aria-label={isTorchOn ? "Turn off torch" : "Turn on torch"}
+					>
+						{isTorchOn ? (
+							<IconTorchOff className="w-6 h-6" />
+						) : (
+							<IconTorchOn className="w-6 h-6" />
+						)}
+					</button>
+				</div>
 			)}
 		</div>
 	);
