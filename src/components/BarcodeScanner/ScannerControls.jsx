@@ -33,22 +33,28 @@ const ScannerControls = ({
 	return (
 		<div
 			className={`absolute bottom-8 flex justify-center items-center z-30 transition-all duration-300 rounded-full ${isScanning
-				? "bg-black/50 border border-white/10 shadow-lg backdrop-blur-md px-6 py-4 gap-8"
-				: "bg-transparent border-transparent px-0 py-0 gap-0"
+				? "bg-black/50 border border-white/10 shadow-lg backdrop-blur-md px-6 py-4"
+				: "bg-transparent border-transparent px-0 py-0"
 				}`}
 		>
-			{shouldShowRotateButton && (
+			<div
+				className={`flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out ${shouldShowRotateButton
+						? "w-14 h-14 opacity-100 scale-100 mr-6"
+						: "w-0 h-0 opacity-0 scale-0 mr-0"
+					}`}
+			>
 				<div className="md:tooltip md:tooltip-top" data-tip="Switch Camera">
 					<button
 						type="button"
 						className="btn btn-circle w-10 h-10 bg-white/10 border-none text-white hover:bg-white/20 active:scale-90 transition-all duration-200"
 						onClick={onSwitchCamera}
 						aria-label="Switch camera"
+						disabled={!shouldShowRotateButton}
 					>
 						<IconRotateCamera className="w-6 h-6" />
 					</button>
 				</div>
-			)}
+			</div>
 
 			<div
 				className="md:tooltip md:tooltip-top"
@@ -71,7 +77,12 @@ const ScannerControls = ({
 				</button>
 			</div>
 
-			{shouldShowTorchButton && (
+			<div
+				className={`flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out ${shouldShowTorchButton
+						? "w-14 h-14 opacity-100 scale-100 ml-6"
+						: "w-0 h-0 opacity-0 scale-0 ml-0"
+					}`}
+			>
 				<div
 					className="md:tooltip md:tooltip-top"
 					data-tip={isTorchOn ? "Turn Off" : "Turn On"}
@@ -81,6 +92,7 @@ const ScannerControls = ({
 						className="btn btn-circle w-10 h-10 bg-white/10 border-none text-white hover:bg-white/20 active:scale-90 transition-all duration-200"
 						onClick={onToggleTorch}
 						aria-label={isTorchOn ? "Turn off torch" : "Turn on torch"}
+						disabled={!shouldShowTorchButton}
 					>
 						{isTorchOn ? (
 							<IconTorchOff className="w-6 h-6" />
@@ -89,7 +101,7 @@ const ScannerControls = ({
 						)}
 					</button>
 				</div>
-			)}
+			</div>
 		</div>
 	);
 };
