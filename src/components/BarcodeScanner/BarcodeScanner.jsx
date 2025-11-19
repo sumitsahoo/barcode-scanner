@@ -58,7 +58,7 @@ const BarcodeScanner = () => {
 			{/* Scanning Animation Line */}
 			{isScanning && (
 				<div
-					className="absolute w-[70%] h-1 bg-red-500 bg-opacity-70 z-40 animate-scan"
+					className="absolute w-[70%] h-1 bg-red-500 bg-opacity-70 z-40 animate-scan will-change-transform"
 					style={{
 						top: "20%",
 						left: "15%",
