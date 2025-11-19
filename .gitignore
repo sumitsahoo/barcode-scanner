@@ -1,71 +1,158 @@
-# Vite
+# Dependencies
+node_modules
+.npm
+.yarn
+.pnpm-store
+jspm_packages/
+bower_components/
+
+# Build outputs
 dist
+dist-ssr
 dev-dist
+build
+*.local
+
+# Vite
+.vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
 
 # Environment variables
 .env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
 .env.*.local
 
-# macOS
-.DS_STORE
-
-# IDE
-.vscode
-.idea
-*.iml
-*.sublime-project
-*.sublime-workspace
-
 # Logs
-*.log*
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Dependencies
-node_modules
-
 # Testing
-coverage/
+coverage
+.nyc_output
 *.lcov
+.jest-cache
 
-# Build artifacts
-build/
-dist-ssr/
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
 
-# Temporary files
-*~
+# IDE - JetBrains
+.idea
+*.iml
+*.iws
+*.ipr
+out/
+
+# IDE - Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# IDE - Vim
 *.swp
 *.swo
+*~
+.*.sw[a-p]
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Cache and temporary files
+.cache
+.temp
 *.tmp
+.eslintcache
+.stylelintcache
+.parcel-cache
+.next
+.nuxt
+.turbo
 
-# Others
-.module-cache
-.grunt
-_SpecRunner.html
-__benchmarks__
-remote-repo/
-chrome-user-data
-fixtures/dom/public/react-dom.js
-fixtures/dom/public/react.js
-test/the-files-to-test.generated.js
-*.pyc
-scripts/flow/*/.flowconfig
-.flowconfig
+# PWA/Service Worker
+sw.js.map
+workbox-*.js.map
 
-packages/react-devtools-core/dist
-packages/react-devtools-extensions/chrome/build
-packages/react-devtools-extensions/chrome/*.crx
-packages/react-devtools-extensions/chrome/*.pem
-packages/react-devtools-extensions/firefox/build
-packages/react-devtools-extensions/firefox/*.xpi
-packages/react-devtools-extensions/firefox/*.pem
-packages/react-devtools-extensions/shared/build
-packages/react-devtools-extensions/.tempUserDataDir
-packages/react-devtools-fusebox/dist
-packages/react-devtools-inline/dist
-packages/react-devtools-shell/dist
-packages/react-devtools-timeline/dist
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Misc
+*.bak
+*.backup
+*.old

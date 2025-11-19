@@ -2,6 +2,7 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { useEffect, useMemo, useState } from "react";
 import BarcodeScanner from "./components/BarcodeScanner";
+import { isPhone } from "./utils/barcodeHelpers";
 import { getThemeColors } from "./utils/themeColors";
 
 /**
@@ -17,6 +18,7 @@ const App = () => {
 	const { background, primary } = useMemo(() => getThemeColors(), []);
 	const particlesColor = primary;
 	const backgroundColor = background;
+	const isMobile = useMemo(() => isPhone(), []);
 
 	// Initialize particles engine on mount - runs only once
 	useEffect(() => {
@@ -31,10 +33,10 @@ const App = () => {
 
 	/**
 	 * Callback when particles are loaded
-	 * @param {Object} container - Particles container instance
+	 * @param {Object} _container - Particles container instance
 	 */
-	const particlesLoaded = (container) => {
-		console.log(container);
+	const particlesLoaded = (_container) => {
+		// Container loaded
 	};
 
 	// Memoize particle options to prevent recreation on every render
@@ -45,7 +47,7 @@ const App = () => {
 			},
 			particles: {
 				number: {
-					value: 80,
+					value: isMobile ? 30 : 80,
 					density: {
 						enable: true,
 						area: 800,
@@ -72,7 +74,7 @@ const App = () => {
 				},
 				move: {
 					enable: true,
-					speed: 1,
+					speed: isMobile ? 0.5 : 1,
 					direction: "none",
 					random: false,
 					straight: false,
@@ -82,7 +84,7 @@ const App = () => {
 			interactivity: {
 				events: {
 					onHover: {
-						enable: true,
+						enable: !isMobile,
 						mode: "grab",
 					},
 					onClick: {
@@ -103,7 +105,7 @@ const App = () => {
 				},
 			},
 		}),
-		[backgroundColor, particlesColor],
+		[backgroundColor, particlesColor, isMobile],
 	);
 
 	return (

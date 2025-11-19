@@ -16,7 +16,47 @@ export default defineConfig(({ mode }) => {
 		devOptions: {
 			enabled: true,
 		},
-		includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg"],
+		includeAssets: [
+			"favicon.ico",
+			"apple-touch-icon.png",
+			"mask-icon.svg",
+			"images/*.svg",
+			"sounds/beep.mp3",
+		],
+		workbox: {
+			globPatterns: ["**/*.{js,css,html,ico,png,svg,mp3,wasm}"],
+			maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB to accommodate WASM files
+			runtimeCaching: [
+				{
+					urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+					handler: "CacheFirst",
+					options: {
+						cacheName: "google-fonts-cache",
+						expiration: {
+							maxEntries: 10,
+							maxAgeSeconds: 60 * 60 * 24 * 365, // <== 365 days
+						},
+						cacheableResponse: {
+							statuses: [0, 200],
+						},
+					},
+				},
+				{
+					urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+					handler: "CacheFirst",
+					options: {
+						cacheName: "gstatic-fonts-cache",
+						expiration: {
+							maxEntries: 10,
+							maxAgeSeconds: 60 * 60 * 24 * 365, // <== 365 days
+						},
+						cacheableResponse: {
+							statuses: [0, 200],
+						},
+					},
+				},
+			],
+		},
 		manifest: {
 			id: env.VITE_APP_BASE_PATH,
 			start_url: env.VITE_APP_BASE_PATH, // Dynamically set start_url
@@ -95,6 +135,23 @@ export default defineConfig(({ mode }) => {
 			host: true,
 			cors: true,
 			allowedHosts: true, // To allow any host to access your server
+		},
+		build: {
+			minify: "terser",
+			terserOptions: {
+				compress: {
+					drop_console: true,
+					drop_debugger: true,
+				},
+			},
+			rollupOptions: {
+				output: {
+					manualChunks: {
+						"react-vendor": ["react", "react-dom"],
+						"particles-vendor": ["@tsparticles/react", "@tsparticles/slim"],
+					},
+				},
+			},
 		},
 	};
 });

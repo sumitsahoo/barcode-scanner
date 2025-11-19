@@ -58,12 +58,21 @@ const BarcodeScanner = () => {
 			{/* Scanning Animation Line */}
 			{isScanning && (
 				<div
-					className="absolute w-[70%] h-1 bg-red-500 bg-opacity-70 z-40 animate-scan"
+					className="absolute w-[80%] z-40 animate-scan will-change-transform pointer-events-none"
 					style={{
 						top: "20%",
-						left: "15%",
+						left: "10%",
 					}}
-				/>
+				>
+					{/* Top Trail (Visible when moving down) */}
+					<div className="absolute bottom-0 w-full h-24 bg-linear-to-b from-transparent to-red-500 animate-trail-down" />
+
+					{/* Glowing Line */}
+					<div className="w-full h-0.5 bg-red-500 shadow-[0_0_15px_2px_rgba(239,68,68,0.8)]" />
+
+					{/* Bottom Trail (Visible when moving up) */}
+					<div className="absolute top-0 w-full h-24 bg-linear-to-b from-red-500 to-transparent animate-trail-up" />
+				</div>
 			)}
 
 			{/* Scanner Controls */}
