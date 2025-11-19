@@ -116,8 +116,16 @@ export const useBarcodeScanner = () => {
 
 			const width = videoRef.current.videoWidth;
 			const height = videoRef.current.videoHeight;
-			canvas.width = width;
-			canvas.height = height;
+
+			// Downscale for performance - limit max dimension to 1280px
+			// This significantly reduces image processing time (grayscale + scanning)
+			const MAX_SCAN_DIMENSION = 1280;
+			const scale = Math.min(MAX_SCAN_DIMENSION / width, MAX_SCAN_DIMENSION / height, 1);
+			const scanWidth = Math.floor(width * scale);
+			const scanHeight = Math.floor(height * scale);
+
+			canvas.width = scanWidth;
+			canvas.height = scanHeight;
 
 			/**
 			 * Animation loop for continuous barcode scanning
@@ -138,8 +146,9 @@ export const useBarcodeScanner = () => {
 				try {
 					if (!videoRef.current || !context) return;
 
-					context.drawImage(videoRef.current, 0, 0, width, height);
-					const imageData = context.getImageData(0, 0, width, height);
+					// Draw video frame to canvas with scaling
+					context.drawImage(videoRef.current, 0, 0, scanWidth, scanHeight);
+					const imageData = context.getImageData(0, 0, scanWidth, scanHeight);
 					const grayscaleImageData = convertToGrayscale(imageData);
 					const results = await scanImageData(grayscaleImageData);
 
@@ -160,7 +169,7 @@ export const useBarcodeScanner = () => {
 
 						handleStopScan();
 						window?.navigator?.vibrate?.(VIBRATION_DURATION_MS);
-						audioRef.current?.play().catch(() => {});
+						audioRef.current?.play().catch(() => { });
 					} else {
 						animationFrameId.current = requestAnimationFrame(scanTick);
 					}

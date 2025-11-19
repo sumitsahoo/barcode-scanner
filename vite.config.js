@@ -96,5 +96,22 @@ export default defineConfig(({ mode }) => {
 			cors: true,
 			allowedHosts: true, // To allow any host to access your server
 		},
+		build: {
+			minify: "terser",
+			terserOptions: {
+				compress: {
+					drop_console: true,
+					drop_debugger: true,
+				},
+			},
+			rollupOptions: {
+				output: {
+					manualChunks: {
+						"react-vendor": ["react", "react-dom"],
+						"particles-vendor": ["@tsparticles/react", "@tsparticles/slim"],
+					},
+				},
+			},
+		},
 	};
 });
