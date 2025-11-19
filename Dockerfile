@@ -10,7 +10,7 @@ RUN mkdir node_modules/.cache && chmod -R 777 node_modules/.cache
 
 RUN npm run build
 
-FROM nginx:1.29.2-alpine
+FROM nginx:1.29.3-alpine
 EXPOSE 8080
 
 USER root
