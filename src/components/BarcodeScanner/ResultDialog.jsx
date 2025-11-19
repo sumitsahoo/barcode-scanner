@@ -31,14 +31,18 @@ const ResultDialog = ({ isOpen, data, dialogTitleId, onCopy, onClose }) => {
 
 	return (
 		<div
-			className={`modal modal-bottom sm:modal-middle transition-all duration-300 ${isOpen ? "modal-open backdrop-blur-sm" : "pointer-events-none"
-				}`}
+			className={`modal modal-bottom sm:modal-middle transition-all duration-300 ${
+				isOpen ? "modal-open backdrop-blur-sm" : "pointer-events-none"
+			}`}
 			role="dialog"
 			aria-labelledby={dialogTitleId}
 		>
 			<div
-				className={`modal-box bg-base-100/90 backdrop-blur-md shadow-2xl border border-white/10 transform transition-all duration-300 ease-out ${isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 translate-y-4"
-					}`}
+				className={`modal-box bg-base-100/90 backdrop-blur-md shadow-2xl border border-white/10 transform transition-all duration-300 ease-out ${
+					isOpen
+						? "scale-100 opacity-100 translate-y-0"
+						: "scale-95 opacity-0 translate-y-4"
+				}`}
 			>
 				<div className="flex flex-col items-center gap-4">
 					{/* Success Icon */}
@@ -104,7 +108,9 @@ const ResultDialog = ({ isOpen, data, dialogTitleId, onCopy, onClose }) => {
 				</div>
 			</div>
 			<form method="dialog" className="modal-backdrop">
-				<button type="button" onClick={onClose} className="cursor-default">close</button>
+				<button type="button" onClick={onClose} className="cursor-default">
+					close
+				</button>
 			</form>
 		</div>
 	);
