@@ -4,10 +4,7 @@ import {
 	SCAN_INTERVAL_MS,
 	VIBRATION_DURATION_MS,
 } from "../constants/scanner";
-import {
-	getMediaConstraints,
-	stopAllTracks,
-} from "../utils/barcodeHelpers";
+import { getMediaConstraints, stopAllTracks } from "../utils/barcodeHelpers";
 
 /**
  * Custom hook for barcode scanning logic and camera state management
@@ -104,7 +101,7 @@ export const useBarcodeScanner = () => {
 
 				handleStopScan();
 				window?.navigator?.vibrate?.(VIBRATION_DURATION_MS);
-				audioRef.current?.play().catch(() => { });
+				audioRef.current?.play().catch(() => {});
 			} else if (error) {
 				console.error("Worker error:", error);
 			}
@@ -145,7 +142,11 @@ export const useBarcodeScanner = () => {
 			// Downscale for performance - limit max dimension to 1280px
 			// This significantly reduces image processing time (grayscale + scanning)
 			const MAX_SCAN_DIMENSION = 1280;
-			const scale = Math.min(MAX_SCAN_DIMENSION / width, MAX_SCAN_DIMENSION / height, 1);
+			const scale = Math.min(
+				MAX_SCAN_DIMENSION / width,
+				MAX_SCAN_DIMENSION / height,
+				1,
+			);
 			const scanWidth = Math.floor(width * scale);
 			const scanHeight = Math.floor(height * scale);
 
@@ -177,10 +178,9 @@ export const useBarcodeScanner = () => {
 
 					// Offload processing to worker
 					// Transfer buffer to avoid copying (zero-copy transfer)
-					workerRef.current.postMessage(
-						{ imageData, type: "scan" },
-						[imageData.data.buffer]
-					);
+					workerRef.current.postMessage({ imageData, type: "scan" }, [
+						imageData.data.buffer,
+					]);
 
 					// Continue loop - worker will message back if found
 					animationFrameId.current = requestAnimationFrame(scanTick);
