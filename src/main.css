@@ -126,17 +126,50 @@
 
 @layer utilities {
 	@keyframes scan {
-		/* Start at top (20% from viewport top, set in component) */
 		0% {
-			transform: translateY(0) translateZ(0);
+			transform: translateY(0);
 		}
-		/* Move down 60vh to stay within bounds (ends at ~80% from top) */
 		50% {
-			transform: translateY(60vh) translateZ(0);
+			transform: translateY(60vh);
 		}
-		/* Return to starting position */
 		100% {
-			transform: translateY(0) translateZ(0);
+			transform: translateY(0);
 		}
 	}
+
+	@keyframes trail-down {
+		0%, 100% { opacity: 0; }
+		15% { opacity: 0.5; }
+		35% { opacity: 0.5; }
+		50% { opacity: 0; }
+	}
+
+	@keyframes trail-up {
+		0%, 100% { opacity: 0; }
+		50% { opacity: 0; }
+		65% { opacity: 0.5; }
+		85% { opacity: 0.5; }
+	}
+}
+
+/* Barcode scanning animation - optimized for smooth 60fps performance */
+@utility animate-scan {
+	/* Custom cubic-bezier for smoother, more natural easing than ease-in-out */
+	animation: scan 2.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+	/* Hint to browser to optimize this property for animation */
+	will-change: transform;
+	/* Force GPU acceleration by creating a new composite layer */
+	transform: translateZ(0);
+	/* Prevent flickering and improve rendering performance */
+	backface-visibility: hidden;
+	/* Further optimize 3D transform rendering */
+	perspective: 1000px;
+}
+
+@utility animate-trail-down {
+	animation: trail-down 2.5s linear infinite;
+}
+
+@utility animate-trail-up {
+	animation: trail-up 2.5s linear infinite;
 }
