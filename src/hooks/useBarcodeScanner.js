@@ -62,8 +62,10 @@ export const useBarcodeScanner = () => {
 
 	/**
 	 * Handle successful barcode detection
+	 * Using refs to avoid recreating the worker effect when callbacks change
 	 */
-	const handleDetection = useCallback((data) => {
+	const handleDetectionRef = useRef(null);
+	handleDetectionRef.current = (data) => {
 		// Stop scanning first
 		handleStopScan();
 
@@ -78,9 +80,9 @@ export const useBarcodeScanner = () => {
 		// Haptic feedback and sound
 		window?.navigator?.vibrate?.(VIBRATION_DURATION_MS);
 		audioRef.current?.play().catch(() => { });
-	}, [handleStopScan]);
+	};
 
-	// Initialize Web Worker
+	// Initialize Web Worker - only once on mount
 	useEffect(() => {
 		workerRef.current = new Worker(
 			new URL("../workers/scanner.worker.js", import.meta.url),
@@ -100,7 +102,8 @@ export const useBarcodeScanner = () => {
 			}
 
 			if (found && data) {
-				handleDetection(data);
+				// Use ref to call latest callback without causing effect to re-run
+				handleDetectionRef.current?.(data);
 			} else if (error) {
 				console.error("Worker error:", error);
 			}
@@ -112,9 +115,12 @@ export const useBarcodeScanner = () => {
 		};
 
 		return () => {
-			workerRef.current?.terminate();
+			if (workerRef.current) {
+				workerRef.current.terminate();
+				workerRef.current = null;
+			}
 		};
-	}, [handleDetection]);
+	}, []); // Empty deps - worker should only be created once
 
 	/**
 	 * Handle errors during scanning or camera operations
@@ -249,16 +255,43 @@ export const useBarcodeScanner = () => {
 		const newFacingMode =
 			scanState.facingMode === "user" ? "environment" : "user";
 
+		// Capture current session to validate after async operations
+		const currentSession = scanSessionRef.current;
+
 		try {
 			if (videoRef.current.srcObject) {
 				stopAllTracks(videoRef.current.srcObject);
 			}
 
 			const mediaConstraints = await getMediaConstraints(newFacingMode);
+
+			// Check if session is still valid after async operation
+			if (currentSession !== scanSessionRef.current) {
+				return;
+			}
+
 			const stream =
 				await navigator.mediaDevices.getUserMedia(mediaConstraints);
+
+			// Check again after getting stream
+			if (currentSession !== scanSessionRef.current) {
+				stopAllTracks(stream);
+				return;
+			}
+
+			if (!videoRef.current) {
+				stopAllTracks(stream);
+				return;
+			}
+
 			videoRef.current.srcObject = stream;
 			await videoRef.current.play();
+
+			// Final check after video starts
+			if (currentSession !== scanSessionRef.current) {
+				handleStopScan();
+				return;
+			}
 
 			const canvas = canvasRef.current;
 			if (canvas) {
@@ -275,7 +308,7 @@ export const useBarcodeScanner = () => {
 			console.error("Camera switch error:", error);
 			handleError(error);
 		}
-	}, [scanState.facingMode, scanState.isScanning, handleError]);
+	}, [scanState.facingMode, scanState.isScanning, handleError, handleStopScan]);
 
 	/**
 	 * Toggle the camera torch/flashlight
