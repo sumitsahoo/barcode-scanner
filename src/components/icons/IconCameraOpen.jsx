@@ -1,22 +1,8 @@
-/**
- * SVG icon component for camera open. The stroke color is set to currentColor,
- * so it will inherit the color from the parent or Tailwind class (e.g. text-primary).
- *
- * @param {string} className - Additional Tailwind or custom classes
- * @param {object} props - Other props passed to the SVG
- */
-
 import { memo } from "react";
+import Icon from "./Icon";
 
-const IconCameraOpen = ({ className = "", ...props }) => (
-	<svg
-		viewBox="0 0 24 24"
-		fill="none"
-		className={className}
-		xmlns="http://www.w3.org/2000/svg"
-		{...props}
-	>
-		<title>Camera Open Icon</title>
+const IconCameraOpen = (props) => (
+	<Icon title="Camera Open Icon" {...props}>
 		<path
 			d="M12 16C13.6569 16 15 14.6569 15 13C15 11.3431 13.6569 10 12 10C10.3431 10 9 11.3431 9 13C9 14.6569 10.3431 16 12 16Z"
 			stroke="currentColor"
@@ -31,7 +17,7 @@ const IconCameraOpen = ({ className = "", ...props }) => (
 			strokeLinecap="round"
 			strokeLinejoin="round"
 		/>
-	</svg>
+	</Icon>
 );
 
 export default memo(IconCameraOpen);

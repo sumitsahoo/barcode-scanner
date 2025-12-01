@@ -41,6 +41,7 @@
 	--noise: 0;
 }
 
+/* Dark theme - inherits shared radius/size/border properties from light theme */
 @plugin "daisyui/theme" {
 	name: "customtheme-dark";
 	default: false;
@@ -67,15 +68,6 @@
 	--color-warning-content: #0f1419;
 	--color-error: #ff6b47;
 	--color-error-content: #ffffff;
-
-	--radius-selector: 1rem;
-	--radius-field: 0.25rem;
-	--radius-box: 0.5rem;
-	--size-selector: 0.25rem;
-	--size-field: 0.25rem;
-	--border: 1px;
-	--depth: 1;
-	--noise: 0;
 }
 
 /*
@@ -124,48 +116,34 @@
 	perspective: 1000px;
 }
 
-@layer utilities {
-	@keyframes scan {
-		0% {
-			transform: translateY(0);
-		}
-		50% {
-			transform: translateY(60vh);
-		}
-		100% {
-			transform: translateY(0);
-		}
+/* Keyframe animations for scan line effects */
+@keyframes scan {
+	0% {
+		transform: translateY(0);
 	}
-
-	@keyframes trail-down {
-		0%, 100% { opacity: 0; }
-		15% { opacity: 0.5; }
-		35% { opacity: 0.5; }
-		50% { opacity: 0; }
+	50% {
+		transform: translateY(45vh);
 	}
-
-	@keyframes trail-up {
-		0%, 100% { opacity: 0; }
-		50% { opacity: 0; }
-		65% { opacity: 0.5; }
-		85% { opacity: 0.5; }
+	100% {
+		transform: translateY(0);
 	}
 }
 
-/* Barcode scanning animation - optimized for smooth 60fps performance */
-@utility animate-scan {
-	/* Custom cubic-bezier for smoother, more natural easing than ease-in-out */
-	animation: scan 2.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-	/* Hint to browser to optimize this property for animation */
-	will-change: transform;
-	/* Force GPU acceleration by creating a new composite layer */
-	transform: translateZ(0);
-	/* Prevent flickering and improve rendering performance */
-	backface-visibility: hidden;
-	/* Further optimize 3D transform rendering */
-	perspective: 1000px;
+@keyframes trail-down {
+	0%, 100% { opacity: 0; }
+	15% { opacity: 0.5; }
+	35% { opacity: 0.5; }
+	50% { opacity: 0; }
 }
 
+@keyframes trail-up {
+	0%, 100% { opacity: 0; }
+	50% { opacity: 0; }
+	65% { opacity: 0.5; }
+	85% { opacity: 0.5; }
+}
+
+/* Trailing animation utilities for scan line effects */
 @utility animate-trail-down {
 	animation: trail-down 2.5s linear infinite;
 }

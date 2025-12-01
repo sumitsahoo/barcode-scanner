@@ -132,16 +132,6 @@ export const getBestRearCamera = async () => {
 };
 
 /**
- * Legacy function - Find the camera device ID that supports torch/flash functionality
- * @deprecated Use getBestRearCamera() instead for better cross-platform support
- * @returns {Promise<string|null>} Device ID with flash support or null
- */
-export const getCameraIdWithFlash = async () => {
-	// Use the new improved method
-	return getBestRearCamera();
-};
-
-/**
  * Get best rear camera ID from localStorage or detect it
  * Caches the result in localStorage for future use
  * @returns {Promise<string|null>} Cached or newly detected camera ID
