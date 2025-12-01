@@ -1,9 +1,10 @@
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadSlim } from "@tsparticles/slim";
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import BarcodeScanner from "./components/BarcodeScanner";
 import { isPhone } from "./utils/barcodeHelpers";
 import { getThemeColors } from "./utils/themeColors";
+
+// Lazy load particles for faster initial render
+const Particles = lazy(() => import("@tsparticles/react").then(mod => ({ default: mod.default })));
 
 /**
  * Main Application Component
@@ -12,7 +13,7 @@ import { getThemeColors } from "./utils/themeColors";
  * @returns {JSX.Element} App component
  */
 const App = () => {
-	const [_init, setInit] = useState(false);
+	const [particlesReady, setParticlesReady] = useState(false);
 
 	// Get DaisyUI theme colors - memoize to avoid re-computation
 	const { background, primary } = useMemo(() => getThemeColors(), []);
@@ -20,24 +21,23 @@ const App = () => {
 	const backgroundColor = background;
 	const isMobile = useMemo(() => isPhone(), []);
 
-	// Initialize particles engine on mount - runs only once
+	// Initialize particles engine after a delay to prioritize main content
 	useEffect(() => {
-		initParticlesEngine(async (engine) => {
-			// Load slim version of tsParticles for better performance
-			// Includes only essential features, reducing bundle size
-			await loadSlim(engine);
-		}).then(() => {
-			setInit(true);
-		});
-	}, []);
+		// Defer particle loading to after main content renders
+		const timeoutId = setTimeout(() => {
+			import("@tsparticles/react").then(({ initParticlesEngine }) => {
+				import("@tsparticles/slim").then(({ loadSlim }) => {
+					initParticlesEngine(async (engine) => {
+						await loadSlim(engine);
+					}).then(() => {
+						setParticlesReady(true);
+					});
+				});
+			});
+		}, 100); // Small delay to let main content render first
 
-	/**
-	 * Callback when particles are loaded
-	 * @param {Object} _container - Particles container instance
-	 */
-	const particlesLoaded = (_container) => {
-		// Container loaded
-	};
+		return () => clearTimeout(timeoutId);
+	}, []);
 
 	// Memoize particle options to prevent recreation on every render
 	const options = useMemo(
@@ -110,7 +110,11 @@ const App = () => {
 
 	return (
 		<div className="App h-dvh w-full overflow-hidden">
-			<Particles options={options} init={particlesLoaded} />
+			{particlesReady && (
+				<Suspense fallback={null}>
+					<Particles options={options} />
+				</Suspense>
+			)}
 			<BarcodeScanner />
 		</div>
 	);
