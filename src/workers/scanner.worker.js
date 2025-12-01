@@ -2,7 +2,7 @@ import { scanImageData } from "@undecaf/zbar-wasm";
 import { convertToGrayscale } from "../utils/barcodeHelpers";
 
 self.onmessage = async (e) => {
-	const { imageData, type } = e.data;
+	const { imageData, type, sessionId } = e.data;
 
 	if (type === "scan") {
 		try {
@@ -13,17 +13,18 @@ self.onmessage = async (e) => {
 				const result = results[0];
 				self.postMessage({
 					found: true,
+					sessionId,
 					data: {
 						typeName: result.typeName?.replace("ZBAR_", "") ?? "",
 						scanData: result.decode() ?? "",
 					},
 				});
 			} else {
-				self.postMessage({ found: false });
+				self.postMessage({ found: false, sessionId });
 			}
 		} catch (error) {
 			console.error("Worker scan error:", error);
-			self.postMessage({ found: false, error: error.message });
+			self.postMessage({ found: false, sessionId, error: error.message });
 		}
 	}
 };

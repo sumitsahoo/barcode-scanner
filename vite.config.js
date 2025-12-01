@@ -58,6 +58,7 @@ export default defineConfig(({ mode }) => {
 			],
 		},
 		manifest: {
+			version: "2.0.1",
 			id: env.VITE_APP_BASE_PATH,
 			start_url: env.VITE_APP_BASE_PATH, // Dynamically set start_url
 			name: "Barcode Scanner",

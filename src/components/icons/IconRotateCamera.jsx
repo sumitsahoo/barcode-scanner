@@ -1,22 +1,8 @@
-/**
- * SVG icon component for rotate camera. The stroke color is set to currentColor,
- * so it will inherit the color from the parent or Tailwind class (e.g. text-primary).
- *
- * @param {string} className - Additional Tailwind or custom classes
- * @param {object} props - Other props passed to the SVG
- */
-
 import { memo } from "react";
+import Icon from "./Icon";
 
-const IconRotateCamera = ({ className = "", ...props }) => (
-	<svg
-		viewBox="0 0 24 24"
-		fill="none"
-		className={className}
-		xmlns="http://www.w3.org/2000/svg"
-		{...props}
-	>
-		<title>Rotate Camera Icon</title>
+const IconRotateCamera = (props) => (
+	<Icon title="Rotate Camera Icon" {...props}>
 		<path
 			d="M14.89 5.0799C14.02 4.8199 13.06 4.6499 12 4.6499C7.20996 4.6499 3.32996 8.5299 3.32996 13.3199C3.32996 18.1199 7.20996 21.9999 12 21.9999C16.79 21.9999 20.67 18.1199 20.67 13.3299C20.67 11.5499 20.13 9.8899 19.21 8.5099"
 			stroke="currentColor"
@@ -38,7 +24,7 @@ const IconRotateCamera = ({ className = "", ...props }) => (
 			strokeLinecap="round"
 			strokeLinejoin="round"
 		/>
-	</svg>
+	</Icon>
 );
 
 export default memo(IconRotateCamera);
