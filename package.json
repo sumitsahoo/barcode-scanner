@@ -20,8 +20,8 @@
 		"@tsparticles/react": "^3.0.0",
 		"@tsparticles/slim": "^3.9.1",
 		"@undecaf/zbar-wasm": "^0.11.0",
-		"react": "^19.2.0",
-		"react-dom": "^19.2.0",
+		"react": "^19.2.1",
+		"react-dom": "^19.2.1",
 		"tsparticles": "^3.9.1"
 	},
 	"devDependencies": {
@@ -32,7 +32,7 @@
 		"@types/react-dom": "^19.2.3",
 		"@vite-pwa/assets-generator": "^1.0.2",
 		"@vitejs/plugin-react": "^5.1.1",
-		"daisyui": "^5.5.5",
+		"daisyui": "^5.5.8",
 		"gh-pages": "^6.3.0",
 		"postcss": "^8.5.6",
 		"tailwindcss": "^4.1.17",
