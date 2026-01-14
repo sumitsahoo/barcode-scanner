@@ -17,12 +17,9 @@
 		"generate-pwa-assets": "pwa-assets-generator --preset minimal public/images/ic-logo.svg"
 	},
 	"dependencies": {
-		"@tsparticles/react": "^3.0.0",
-		"@tsparticles/slim": "^3.9.1",
 		"@undecaf/zbar-wasm": "^0.11.0",
 		"react": "^19.2.3",
-		"react-dom": "^19.2.3",
-		"tsparticles": "^3.9.1"
+		"react-dom": "^19.2.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.11",

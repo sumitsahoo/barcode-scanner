@@ -149,7 +149,6 @@ export default defineConfig(({ mode }) => {
 				output: {
 					manualChunks: {
 						"react-vendor": ["react", "react-dom"],
-						"particles-vendor": ["@tsparticles/react", "@tsparticles/slim"],
 					},
 				},
 			},
