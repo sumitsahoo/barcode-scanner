@@ -41,7 +41,6 @@ export const useBarcodeScanner = () => {
 	 * Stop scanning and cleanup resources
 	 */
 	const handleStopScan = useCallback(() => {
-		// Increment session to invalidate any pending worker results
 		scanSessionRef.current += 1;
 
 		if (animationFrameId.current) {
@@ -51,33 +50,17 @@ export const useBarcodeScanner = () => {
 
 		if (videoRef.current) {
 			videoRef.current.pause();
-			if (videoRef.current.srcObject) {
-				stopAllTracks(videoRef.current.srcObject);
-				videoRef.current.srcObject = null;
-			}
+			stopAllTracks(videoRef.current.srcObject);
+			videoRef.current.srcObject = null;
 		}
 
 		setScanState((prev) => ({ ...prev, isScanning: false, isTorchOn: false }));
 	}, []);
 
-	/**
-	 * Handle successful barcode detection
-	 * Using refs to avoid recreating the worker effect when callbacks change
-	 */
 	const handleDetectionRef = useRef(null);
 	handleDetectionRef.current = (data) => {
-		// Stop scanning first
 		handleStopScan();
-
-		// Then update state with result
-		setScanState((prev) => ({
-			...prev,
-			isScanning: false,
-			data: data,
-			showDialog: true,
-		}));
-
-		// Haptic feedback and sound
+		setScanState((prev) => ({ ...prev, data, showDialog: true }));
 		window?.navigator?.vibrate?.(VIBRATION_DURATION_MS);
 		audioRef.current?.play().catch(() => { });
 	};
@@ -90,27 +73,16 @@ export const useBarcodeScanner = () => {
 		);
 
 		workerRef.current.onmessage = (e) => {
-			const { found, data, sessionId, error } = e.data;
-
-			// Mark worker as no longer busy
+			const { found, data, sessionId } = e.data;
 			isWorkerBusy.current = false;
 
-			// CRITICAL: Only process if this result belongs to current session
-			// This prevents stale results from previous scans
-			if (sessionId !== scanSessionRef.current) {
-				return;
-			}
-
-			if (found && data) {
-				// Use ref to call latest callback without causing effect to re-run
+			// Only process if this result belongs to current session
+			if (sessionId === scanSessionRef.current && found && data) {
 				handleDetectionRef.current?.(data);
-			} else if (error) {
-				console.error("Worker error:", error);
 			}
 		};
 
-		workerRef.current.onerror = (error) => {
-			console.error("Worker fatal error:", error);
+		workerRef.current.onerror = () => {
 			isWorkerBusy.current = false;
 		};
 
@@ -123,21 +95,11 @@ export const useBarcodeScanner = () => {
 	}, []); // Empty deps - worker should only be created once
 
 	/**
-	 * Handle errors during scanning or camera operations
-	 */
-	const handleError = useCallback((error) => {
-		console.error("Scanner Error:", error);
-		handleStopScan();
-	}, [handleStopScan]);
-
-	/**
 	 * Initialize and start the barcode scanning process
 	 */
 	const handleScan = useCallback(async () => {
-		// Start new session - this invalidates any pending results from previous scans
 		scanSessionRef.current += 1;
 		const currentSession = scanSessionRef.current;
-
 		isWorkerBusy.current = false;
 		lastScanTimeRef.current = 0;
 
@@ -231,20 +193,18 @@ export const useBarcodeScanner = () => {
 						[imageData.data.buffer]
 					);
 
-					// Continue loop
 					animationFrameId.current = requestAnimationFrame(scanTick);
-				} catch (err) {
-					console.error("Scan tick error:", err);
+				} catch {
 					isWorkerBusy.current = false;
 					animationFrameId.current = requestAnimationFrame(scanTick);
 				}
 			};
 
 			animationFrameId.current = requestAnimationFrame(scanTick);
-		} catch (error) {
-			handleError(error);
+		} catch {
+			handleStopScan();
 		}
-	}, [scanState.facingMode, handleError, handleStopScan]);
+	}, [scanState.facingMode, handleStopScan]);
 
 	/**
 	 * Switch between front and back cameras
@@ -252,10 +212,7 @@ export const useBarcodeScanner = () => {
 	const handleSwitchCamera = useCallback(async () => {
 		if (!videoRef.current || !scanState.isScanning) return;
 
-		const newFacingMode =
-			scanState.facingMode === "user" ? "environment" : "user";
-
-		// Capture current session to validate after async operations
+		const newFacingMode = scanState.facingMode === "user" ? "environment" : "user";
 		const currentSession = scanSessionRef.current;
 
 		try {
@@ -304,85 +261,37 @@ export const useBarcodeScanner = () => {
 				facingMode: newFacingMode,
 				isTorchOn: false,
 			}));
-		} catch (error) {
-			console.error("Camera switch error:", error);
-			handleError(error);
+		} catch {
+			handleStopScan();
 		}
-	}, [scanState.facingMode, scanState.isScanning, handleError, handleStopScan]);
+	}, [scanState.facingMode, scanState.isScanning, handleStopScan]);
 
-	/**
-	 * Toggle the camera torch/flashlight
-	 */
 	const handleToggleTorch = useCallback(async () => {
-		if (!videoRef.current?.srcObject) return;
+		const track = videoRef.current?.srcObject?.getVideoTracks()?.[0];
+		if (!track?.getCapabilities()?.torch) return;
 
-		const tracks = videoRef.current.srcObject.getVideoTracks();
-		if (!tracks?.length) return;
-
-		const track = tracks[0];
-		const capabilities = track.getCapabilities();
-
-		if (!capabilities.torch) {
-			console.warn("Torch not supported on this device");
-			return;
-		}
-
-		try {
-			const newTorchState = !scanState.isTorchOn;
-			await track.applyConstraints({
-				advanced: [{ torch: newTorchState }],
-			});
-			setScanState((prev) => ({ ...prev, isTorchOn: newTorchState }));
-		} catch (error) {
-			console.error("Torch toggle error:", error);
-		}
+		const newTorchState = !scanState.isTorchOn;
+		await track.applyConstraints({ advanced: [{ torch: newTorchState }] }).catch(() => { });
+		setScanState((prev) => ({ ...prev, isTorchOn: newTorchState }));
 	}, [scanState.isTorchOn]);
 
-	/**
-	 * Copy scanned barcode data to clipboard
-	 */
 	const handleDataCopy = useCallback(async () => {
-		if (!scanState.data?.scanData) return;
-
-		try {
-			await navigator.clipboard.writeText(scanState.data.scanData);
-		} catch (error) {
-			console.error("Clipboard copy error:", error);
+		if (scanState.data?.scanData) {
+			await navigator.clipboard.writeText(scanState.data.scanData).catch(() => { });
 		}
-
 		setScanState((prev) => ({ ...prev, showDialog: false }));
 	}, [scanState.data?.scanData]);
 
-	/**
-	 * Toggle the result dialog visibility
-	 */
-	const handleShowDialog = useCallback(() => {
-		setScanState((prev) => ({ ...prev, showDialog: !prev.showDialog }));
-	}, []);
+	const handleShowDialog = useCallback(
+		() => setScanState((prev) => ({ ...prev, showDialog: !prev.showDialog })),
+		[],
+	);
 
-	// Cleanup on unmount
-	useEffect(() => {
-		return () => {
-			// Invalidate any pending worker results
-			scanSessionRef.current += 1;
+	// Cleanup on unmount - store handleStopScan ref for cleanup
+	const handleStopScanRef = useRef(handleStopScan);
+	handleStopScanRef.current = handleStopScan;
 
-			if (animationFrameId.current) {
-				cancelAnimationFrame(animationFrameId.current);
-				animationFrameId.current = null;
-			}
-
-			if (videoRef.current) {
-				if (videoRef.current.srcObject) {
-					stopAllTracks(videoRef.current.srcObject);
-					videoRef.current.srcObject = null;
-				}
-				videoRef.current.pause();
-			}
-
-			// Clear context reference
-			contextRef.current = null;
-		};
-	}, []);
+	useEffect(() => () => handleStopScanRef.current(), []);
 
 	return {
 		scanState,

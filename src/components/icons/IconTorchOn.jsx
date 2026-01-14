@@ -1,4 +1,3 @@
-import { memo } from "react";
 import Icon from "./Icon";
 
 const IconTorchOn = (props) => (
@@ -14,4 +13,4 @@ const IconTorchOn = (props) => (
 	</Icon>
 );
 
-export default memo(IconTorchOn);
+export default IconTorchOn;
