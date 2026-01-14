@@ -182,14 +182,8 @@ export const getMediaConstraints = async (facingMode) => {
 
 /**
  * Stop all media tracks in a stream
- * Properly releases camera/microphone resources
  * @param {MediaStream} stream - MediaStream to stop
  */
 export const stopAllTracks = (stream) => {
-	if (stream) {
-		const tracks = stream.getTracks();
-		for (const track of tracks) {
-			track.stop();
-		}
-	}
+	for (const track of stream?.getTracks() ?? []) track.stop();
 };

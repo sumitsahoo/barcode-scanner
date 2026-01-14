@@ -1,4 +1,3 @@
-import { memo } from "react";
 import Icon from "./Icon";
 
 const IconCameraOpen = (props) => (
@@ -20,4 +19,4 @@ const IconCameraOpen = (props) => (
 	</Icon>
 );
 
-export default memo(IconCameraOpen);
+export default IconCameraOpen;

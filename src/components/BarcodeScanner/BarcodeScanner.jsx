@@ -7,16 +7,9 @@ import IconCameraClosed from "../icons/IconCameraClosed";
 import ResultDialog from "./ResultDialog";
 import ScannerControls from "./ScannerControls";
 
-/**
- * BarcodeScanner Component
- * Main component for barcode scanning functionality
- * Displays camera feed and provides controls for scanning
- *
- * @returns {JSX.Element} BarcodeScanner component
- */
 const BarcodeScanner = () => {
 	const {
-		scanState,
+		scanState: { isScanning, facingMode, isTorchOn, showDialog, data },
 		videoRef,
 		canvasRef,
 		audioRef,
@@ -28,82 +21,43 @@ const BarcodeScanner = () => {
 		handleShowDialog,
 	} = useBarcodeScanner();
 
-	const { isScanning, facingMode, isTorchOn, showDialog, data } = scanState;
 	const dialogTitleId = useId();
-
-	// Computed values for conditional rendering
 	const isPhoneDevice = isPhone();
-	const shouldShowRotateButton = isScanning && isPhoneDevice;
-	const shouldShowTorchButton =
-		isScanning && isPhoneDevice && facingMode === "environment";
 
 	return (
 		<div className="relative w-full h-dvh flex justify-center items-center overflow-hidden backdrop-blur-none">
-			{/* Camera Feed Background */}
+			{/* Camera Feed */}
 			<div className="absolute inset-0 flex justify-center items-center">
 				<IconCameraClosed className="absolute z-10 w-[40vw] h-[40vw] md:w-[30vw] md:h-[30vw] text-primary" />
-				<video
-					title="Barcode Scanner"
-					ref={videoRef}
-					autoPlay
-					muted
-					playsInline
-					className="w-full h-full object-cover drop-shadow-xl relative z-20"
-				/>
+				<video title="Barcode Scanner" ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover drop-shadow-xl relative z-20" />
 			</div>
 
-			{/* Hidden Canvas for Image Processing */}
 			<canvas ref={canvasRef} hidden />
 
 			{/* Scanning Animation Line */}
 			{isScanning && (
-				<div
-					className="absolute w-[80%] z-40 animate-scan will-change-transform pointer-events-none"
-					style={{
-						top: "20%",
-						left: "10%",
-					}}
-				>
-					{/* Top Trail (Visible when moving down) */}
+				<div className="absolute w-[80%] z-40 animate-scan will-change-transform pointer-events-none" style={{ top: "20%", left: "10%" }}>
 					<div className="absolute bottom-0 w-full h-24 bg-linear-to-b from-transparent to-red-500 animate-trail-down" />
-
-					{/* Glowing Line */}
 					<div className="w-full h-0.5 bg-red-500 shadow-[0_0_15px_2px_rgba(239,68,68,0.8)]" />
-
-					{/* Bottom Trail (Visible when moving up) */}
 					<div className="absolute top-0 w-full h-24 bg-linear-to-b from-red-500 to-transparent animate-trail-up" />
 				</div>
 			)}
 
-			{/* Scanner Controls */}
 			<ScannerControls
 				isScanning={isScanning}
 				isTorchOn={isTorchOn}
-				shouldShowRotateButton={shouldShowRotateButton}
-				shouldShowTorchButton={shouldShowTorchButton}
+				shouldShowRotateButton={isScanning && isPhoneDevice}
+				shouldShowTorchButton={isScanning && isPhoneDevice && facingMode === "environment"}
 				onScan={handleScan}
 				onStopScan={handleStopScan}
 				onSwitchCamera={handleSwitchCamera}
 				onToggleTorch={handleToggleTorch}
 			/>
 
-			{/* Result Dialog */}
-			<ResultDialog
-				isOpen={showDialog}
-				data={data}
-				dialogTitleId={dialogTitleId}
-				onCopy={handleDataCopy}
-				onClose={handleShowDialog}
-			/>
+			<ResultDialog isOpen={showDialog} data={data} dialogTitleId={dialogTitleId} onCopy={handleDataCopy} onClose={handleShowDialog} />
 
-			{/* Beep Sound */}
-			{/* biome-ignore lint/a11y/useMediaCaption: This is only for beep sound */}
-			<audio
-				title="Beep Sound"
-				ref={audioRef}
-				src={`${getBasePath()}${AUDIO_CONFIG.BEEP_PATH}`}
-				preload={AUDIO_CONFIG.PRELOAD}
-			/>
+			{/* biome-ignore lint/a11y/useMediaCaption: Beep sound only */}
+			<audio title="Beep Sound" ref={audioRef} src={`${getBasePath()}${AUDIO_CONFIG.BEEP_PATH}`} preload={AUDIO_CONFIG.PRELOAD} />
 		</div>
 	);
 };

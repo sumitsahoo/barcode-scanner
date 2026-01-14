@@ -29,25 +29,7 @@ export const validateEnv = () => {
  * Get base path from environment
  * @returns {string} The base path for the application
  */
-export const getBasePath = () => {
-	return import.meta.env.VITE_APP_BASE_PATH || "/";
-};
-
-/**
- * Check if running in development mode
- * @returns {boolean}
- */
-export const isDevelopment = () => {
-	return import.meta.env.DEV;
-};
-
-/**
- * Check if running in production mode
- * @returns {boolean}
- */
-export const isProduction = () => {
-	return import.meta.env.PROD;
-};
+export const getBasePath = () => import.meta.env.VITE_APP_BASE_PATH || "/";
 
 // Validate environment on module load
 validateEnv();

@@ -14,11 +14,7 @@ const Particles = lazy(() => import("@tsparticles/react").then(mod => ({ default
  */
 const App = () => {
 	const [particlesReady, setParticlesReady] = useState(false);
-
-	// Get DaisyUI theme colors - memoize to avoid re-computation
-	const { background, primary } = useMemo(() => getThemeColors(), []);
-	const particlesColor = primary;
-	const backgroundColor = background;
+	const { background: backgroundColor, primary: particlesColor } = useMemo(() => getThemeColors(), []);
 	const isMobile = useMemo(() => isPhone(), []);
 
 	// Initialize particles engine after a delay to prioritize main content

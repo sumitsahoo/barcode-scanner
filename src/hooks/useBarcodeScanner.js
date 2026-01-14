@@ -90,27 +90,16 @@ export const useBarcodeScanner = () => {
 		);
 
 		workerRef.current.onmessage = (e) => {
-			const { found, data, sessionId, error } = e.data;
-
-			// Mark worker as no longer busy
+			const { found, data, sessionId } = e.data;
 			isWorkerBusy.current = false;
 
-			// CRITICAL: Only process if this result belongs to current session
-			// This prevents stale results from previous scans
-			if (sessionId !== scanSessionRef.current) {
-				return;
-			}
-
-			if (found && data) {
-				// Use ref to call latest callback without causing effect to re-run
+			// Only process if this result belongs to current session
+			if (sessionId === scanSessionRef.current && found && data) {
 				handleDetectionRef.current?.(data);
-			} else if (error) {
-				console.error("Worker error:", error);
 			}
 		};
 
-		workerRef.current.onerror = (error) => {
-			console.error("Worker fatal error:", error);
+		workerRef.current.onerror = () => {
 			isWorkerBusy.current = false;
 		};
 
@@ -122,13 +111,7 @@ export const useBarcodeScanner = () => {
 		};
 	}, []); // Empty deps - worker should only be created once
 
-	/**
-	 * Handle errors during scanning or camera operations
-	 */
-	const handleError = useCallback((error) => {
-		console.error("Scanner Error:", error);
-		handleStopScan();
-	}, [handleStopScan]);
+	const handleError = useCallback(() => handleStopScan(), [handleStopScan]);
 
 	/**
 	 * Initialize and start the barcode scanning process
@@ -310,79 +293,32 @@ export const useBarcodeScanner = () => {
 		}
 	}, [scanState.facingMode, scanState.isScanning, handleError, handleStopScan]);
 
-	/**
-	 * Toggle the camera torch/flashlight
-	 */
 	const handleToggleTorch = useCallback(async () => {
-		if (!videoRef.current?.srcObject) return;
+		const track = videoRef.current?.srcObject?.getVideoTracks()?.[0];
+		if (!track?.getCapabilities()?.torch) return;
 
-		const tracks = videoRef.current.srcObject.getVideoTracks();
-		if (!tracks?.length) return;
-
-		const track = tracks[0];
-		const capabilities = track.getCapabilities();
-
-		if (!capabilities.torch) {
-			console.warn("Torch not supported on this device");
-			return;
-		}
-
-		try {
-			const newTorchState = !scanState.isTorchOn;
-			await track.applyConstraints({
-				advanced: [{ torch: newTorchState }],
-			});
-			setScanState((prev) => ({ ...prev, isTorchOn: newTorchState }));
-		} catch (error) {
-			console.error("Torch toggle error:", error);
-		}
+		const newTorchState = !scanState.isTorchOn;
+		await track.applyConstraints({ advanced: [{ torch: newTorchState }] }).catch(() => { });
+		setScanState((prev) => ({ ...prev, isTorchOn: newTorchState }));
 	}, [scanState.isTorchOn]);
 
-	/**
-	 * Copy scanned barcode data to clipboard
-	 */
 	const handleDataCopy = useCallback(async () => {
-		if (!scanState.data?.scanData) return;
-
-		try {
-			await navigator.clipboard.writeText(scanState.data.scanData);
-		} catch (error) {
-			console.error("Clipboard copy error:", error);
+		if (scanState.data?.scanData) {
+			await navigator.clipboard.writeText(scanState.data.scanData).catch(() => { });
 		}
-
 		setScanState((prev) => ({ ...prev, showDialog: false }));
 	}, [scanState.data?.scanData]);
 
-	/**
-	 * Toggle the result dialog visibility
-	 */
-	const handleShowDialog = useCallback(() => {
-		setScanState((prev) => ({ ...prev, showDialog: !prev.showDialog }));
-	}, []);
+	const handleShowDialog = useCallback(
+		() => setScanState((prev) => ({ ...prev, showDialog: !prev.showDialog })),
+		[],
+	);
 
-	// Cleanup on unmount
-	useEffect(() => {
-		return () => {
-			// Invalidate any pending worker results
-			scanSessionRef.current += 1;
+	// Cleanup on unmount - store handleStopScan ref for cleanup
+	const handleStopScanRef = useRef(handleStopScan);
+	handleStopScanRef.current = handleStopScan;
 
-			if (animationFrameId.current) {
-				cancelAnimationFrame(animationFrameId.current);
-				animationFrameId.current = null;
-			}
-
-			if (videoRef.current) {
-				if (videoRef.current.srcObject) {
-					stopAllTracks(videoRef.current.srcObject);
-					videoRef.current.srcObject = null;
-				}
-				videoRef.current.pause();
-			}
-
-			// Clear context reference
-			contextRef.current = null;
-		};
-	}, []);
+	useEffect(() => () => handleStopScanRef.current(), []);
 
 	return {
 		scanState,

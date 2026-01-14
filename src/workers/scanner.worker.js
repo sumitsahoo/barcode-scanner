@@ -1,30 +1,25 @@
 import { scanImageData } from "@undecaf/zbar-wasm";
 import { convertToGrayscale } from "../utils/barcodeHelpers";
 
-self.onmessage = async (e) => {
-	const { imageData, type, sessionId } = e.data;
+self.onmessage = async ({ data: { imageData, type, sessionId } }) => {
+	if (type !== "scan") return;
 
-	if (type === "scan") {
-		try {
-			const grayscaleImageData = convertToGrayscale(imageData);
-			const results = await scanImageData(grayscaleImageData);
-
-			if (results.length > 0) {
-				const result = results[0];
-				self.postMessage({
-					found: true,
-					sessionId,
-					data: {
-						typeName: result.typeName?.replace("ZBAR_", "") ?? "",
-						scanData: result.decode() ?? "",
-					},
-				});
-			} else {
-				self.postMessage({ found: false, sessionId });
-			}
-		} catch (error) {
-			console.error("Worker scan error:", error);
-			self.postMessage({ found: false, sessionId, error: error.message });
+	try {
+		const results = await scanImageData(convertToGrayscale(imageData));
+		if (results.length > 0) {
+			const result = results[0];
+			self.postMessage({
+				found: true,
+				sessionId,
+				data: {
+					typeName: result.typeName?.replace("ZBAR_", "") ?? "",
+					scanData: result.decode() ?? "",
+				},
+			});
+		} else {
+			self.postMessage({ found: false, sessionId });
 		}
+	} catch (error) {
+		self.postMessage({ found: false, sessionId, error: error.message });
 	}
 };
