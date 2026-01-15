@@ -5,10 +5,13 @@ import IconRotateCamera from "../icons/IconRotateCamera";
 import IconTorchOff from "../icons/IconTorchOff";
 import IconTorchOn from "../icons/IconTorchOn";
 
-const BTN_CLASS = "btn btn-circle w-10 h-10 bg-white/10 border-none text-white hover:bg-white/20 active:scale-90 transition-all duration-200";
+const BTN_CLASS =
+	"btn btn-circle w-10 h-10 bg-white/10 border-none text-white hover:bg-white/20 active:scale-90 transition-all duration-200";
 
 const AnimatedButtonWrapper = ({ show, left, children }) => (
-	<div className={`flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out ${show ? `w-12 h-12 opacity-100 scale-100 ${left ? "mr-2" : "ml-2"}` : "w-0 h-0 opacity-0 scale-0"}`}>
+	<div
+		className={`flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out ${show ? `w-12 h-12 opacity-100 scale-100 ${left ? "mr-2" : "ml-2"}` : "w-0 h-0 opacity-0 scale-0"}`}
+	>
 		{children}
 	</div>
 );
@@ -26,11 +29,19 @@ const ScannerControls = ({
 	onSwitchCamera,
 	onToggleTorch,
 }) => (
-	<div className={`absolute bottom-8 flex justify-center items-center z-30 transition-all duration-300 rounded-full ${isScanning ? "bg-black/50 border border-white/10 shadow-lg backdrop-blur-md px-4 py-2 md:p-2" : "bg-transparent border-transparent"}`}>
+	<div
+		className={`absolute bottom-8 flex justify-center items-center z-30 transition-all duration-300 rounded-full ${isScanning ? "bg-black/50 border border-white/10 shadow-lg backdrop-blur-md px-4 py-2 md:p-2" : "bg-transparent border-transparent"}`}
+	>
 		{/* Rotate Camera Button */}
 		<AnimatedButtonWrapper show={shouldShowRotateButton} left>
 			<div className="md:tooltip md:tooltip-top" data-tip="Switch Camera">
-				<button type="button" className={BTN_CLASS} onClick={onSwitchCamera} aria-label="Switch camera" disabled={!shouldShowRotateButton}>
+				<button
+					type="button"
+					className={BTN_CLASS}
+					onClick={onSwitchCamera}
+					aria-label="Switch camera"
+					disabled={!shouldShowRotateButton}
+				>
 					<IconRotateCamera className="w-6 h-6" />
 				</button>
 			</div>
@@ -51,7 +62,13 @@ const ScannerControls = ({
 		{/* Torch Button */}
 		<AnimatedButtonWrapper show={shouldShowTorchButton}>
 			<div className="md:tooltip md:tooltip-top" data-tip={isTorchOn ? "Turn Off" : "Turn On"}>
-				<button type="button" className={BTN_CLASS} onClick={onToggleTorch} aria-label={isTorchOn ? "Turn off torch" : "Turn on torch"} disabled={!shouldShowTorchButton}>
+				<button
+					type="button"
+					className={BTN_CLASS}
+					onClick={onToggleTorch}
+					aria-label={isTorchOn ? "Turn off torch" : "Turn on torch"}
+					disabled={!shouldShowTorchButton}
+				>
 					{isTorchOn ? <IconTorchOff className="w-6 h-6" /> : <IconTorchOn className="w-6 h-6" />}
 				</button>
 			</div>

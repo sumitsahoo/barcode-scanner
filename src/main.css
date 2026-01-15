@@ -130,17 +130,35 @@
 }
 
 @keyframes trail-down {
-	0%, 100% { opacity: 0; }
-	15% { opacity: 0.5; }
-	35% { opacity: 0.5; }
-	50% { opacity: 0; }
+	0%,
+	100% {
+		opacity: 0;
+	}
+	15% {
+		opacity: 0.5;
+	}
+	35% {
+		opacity: 0.5;
+	}
+	50% {
+		opacity: 0;
+	}
 }
 
 @keyframes trail-up {
-	0%, 100% { opacity: 0; }
-	50% { opacity: 0; }
-	65% { opacity: 0.5; }
-	85% { opacity: 0.5; }
+	0%,
+	100% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 0;
+	}
+	65% {
+		opacity: 0.5;
+	}
+	85% {
+		opacity: 0.5;
+	}
 }
 
 /* Trailing animation utilities for scan line effects */
@@ -154,7 +172,8 @@
 
 /* CSS Particle animations */
 @keyframes float {
-	0%, 100% {
+	0%,
+	100% {
 		transform: translate(0, 0) scale(1);
 		opacity: 0.6;
 	}
@@ -173,8 +192,13 @@
 }
 
 @keyframes pulse-slow {
-	0%, 100% { opacity: 0.15; }
-	50% { opacity: 0.35; }
+	0%,
+	100% {
+		opacity: 0.15;
+	}
+	50% {
+		opacity: 0.35;
+	}
 }
 
 @utility animate-float {

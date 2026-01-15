@@ -16,8 +16,7 @@ import {
  * Detect if the current device is a mobile phone or tablet
  * @returns {boolean} True if device is a phone/tablet
  */
-export const isPhone = () =>
-	/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+export const isPhone = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 /**
  * Convert color image data to grayscale using luminosity method
@@ -82,11 +81,7 @@ export const getBestRearCamera = async () => {
 			// Priority 1: Identify main/wide camera by label (highest priority)
 			// iOS: "back camera" or "wide" or "camera 0"
 			// Android: "camera 0" or "back camera" or "main camera"
-			if (
-				label.includes("back camera") &&
-				!label.includes("ultra") &&
-				!label.includes("telephoto")
-			) {
+			if (label.includes("back camera") && !label.includes("ultra") && !label.includes("telephoto")) {
 				score += 100;
 			} else if (label.includes("wide") && !label.includes("ultra")) {
 				score += 100;
@@ -110,11 +105,7 @@ export const getBestRearCamera = async () => {
 			}
 
 			// Penalty: Avoid ultra-wide and telephoto cameras
-			if (
-				label.includes("ultra") ||
-				label.includes("telephoto") ||
-				label.includes("tele")
-			) {
+			if (label.includes("ultra") || label.includes("telephoto") || label.includes("tele")) {
 				score -= 50;
 			}
 
@@ -154,9 +145,7 @@ export const getAndSetCameraIdWithFlash = async () => {
  * @returns {Promise<MediaStreamConstraints>} Media constraints object
  */
 export const getMediaConstraints = async (facingMode) => {
-	const baseSettings = isPhone()
-		? MOBILE_CAMERA_SETTINGS
-		: DESKTOP_CAMERA_SETTINGS;
+	const baseSettings = isPhone() ? MOBILE_CAMERA_SETTINGS : DESKTOP_CAMERA_SETTINGS;
 
 	const customConstraints = {
 		audio: false,
@@ -164,8 +153,7 @@ export const getMediaConstraints = async (facingMode) => {
 			...baseSettings,
 			...CAMERA_DEFAULTS,
 			facingMode,
-			zoom:
-				facingMode === FACING_MODE.USER ? ZOOM_LEVELS.FRONT : ZOOM_LEVELS.BACK,
+			zoom: facingMode === FACING_MODE.USER ? ZOOM_LEVELS.FRONT : ZOOM_LEVELS.BACK,
 		},
 	};
 

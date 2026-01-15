@@ -16,13 +16,7 @@ export default defineConfig(({ mode }) => {
 		devOptions: {
 			enabled: true,
 		},
-		includeAssets: [
-			"favicon.ico",
-			"apple-touch-icon.png",
-			"mask-icon.svg",
-			"images/*.svg",
-			"sounds/beep.mp3",
-		],
+		includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg", "images/*.svg", "sounds/beep.mp3"],
 		workbox: {
 			globPatterns: ["**/*.{js,css,html,ico,png,svg,mp3,wasm}"],
 			maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB to accommodate WASM files
@@ -62,8 +56,7 @@ export default defineConfig(({ mode }) => {
 			id: env.VITE_APP_BASE_PATH,
 			start_url: env.VITE_APP_BASE_PATH, // Dynamically set start_url
 			name: "Barcode Scanner",
-			description:
-				"A fast and efficient barcode scanner app designed for all devices.",
+			description: "A fast and efficient barcode scanner app designed for all devices.",
 			short_name: "Barcode Scanner",
 			theme_color: "#8bd5ca",
 			background_color: "#8bd5ca",
