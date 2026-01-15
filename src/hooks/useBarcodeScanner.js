@@ -58,7 +58,7 @@ export const useBarcodeScanner = () => {
 		handleStopScan();
 		setScanState((prev) => ({ ...prev, data, showDialog: true }));
 		window?.navigator?.vibrate?.(VIBRATION_DURATION_MS);
-		audioRef.current?.play().catch(() => {});
+		audioRef.current?.play().catch(() => { });
 	};
 
 	// Initialize Web Worker - only once on mount
@@ -258,13 +258,13 @@ export const useBarcodeScanner = () => {
 		if (!track?.getCapabilities()?.torch) return;
 
 		const newTorchState = !scanState.isTorchOn;
-		await track.applyConstraints({ advanced: [{ torch: newTorchState }] }).catch(() => {});
+		await track.applyConstraints({ advanced: [{ torch: newTorchState }] }).catch(() => { });
 		setScanState((prev) => ({ ...prev, isTorchOn: newTorchState }));
 	}, [scanState.isTorchOn]);
 
 	const handleDataCopy = useCallback(async () => {
 		if (scanState.data?.scanData) {
-			await navigator.clipboard.writeText(scanState.data.scanData).catch(() => {});
+			await navigator.clipboard.writeText(scanState.data.scanData).catch(() => { });
 		}
 		setScanState((prev) => ({ ...prev, showDialog: false }));
 	}, [scanState.data?.scanData]);
