@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
 		devOptions: {
 			enabled: true,
 		},
-		includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg", "images/*.svg", "sounds/beep.mp3"],
+		includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg", "images/*.svg"],
 		workbox: {
 			globPatterns: ["**/*.{js,css,html,ico,png,svg,mp3,wasm}"],
 			maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB to accommodate WASM files

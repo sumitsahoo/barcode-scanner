@@ -30,11 +30,3 @@ export const CANVAS_CONTEXT_OPTIONS = {
 	desynchronized: true,
 };
 
-/**
- * Audio configuration
- * @constant {Object}
- */
-export const AUDIO_CONFIG = {
-	BEEP_PATH: "sounds/beep.mp3",
-	PRELOAD: "auto",
-};

@@ -1,6 +1,4 @@
 import { useId } from "react";
-import { getBasePath } from "../../config/env";
-import { AUDIO_CONFIG } from "../../constants/scanner";
 import { useBarcodeScanner } from "../../hooks/useBarcodeScanner";
 import { isPhone } from "../../utils/barcodeHelpers";
 import IconCameraClosed from "../icons/IconCameraClosed";
@@ -12,7 +10,6 @@ const BarcodeScanner = () => {
 		scanState: { isScanning, facingMode, isTorchOn, showDialog, data },
 		videoRef,
 		canvasRef,
-		audioRef,
 		handleScan,
 		handleStopScan,
 		handleSwitchCamera,
@@ -70,14 +67,6 @@ const BarcodeScanner = () => {
 				dialogTitleId={dialogTitleId}
 				onCopy={handleDataCopy}
 				onClose={handleShowDialog}
-			/>
-
-			{/* biome-ignore lint/a11y/useMediaCaption: Beep sound only */}
-			<audio
-				title="Beep Sound"
-				ref={audioRef}
-				src={`${getBasePath()}${AUDIO_CONFIG.BEEP_PATH}`}
-				preload={AUDIO_CONFIG.PRELOAD}
 			/>
 		</div>
 	);

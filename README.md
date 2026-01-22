@@ -72,7 +72,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 - [ZBar WASM](https://github.com/undecaf/zbar-wasm) - Barcode detection
 - [SVG Repo](https://www.svgrepo.com/) - Icons
-- [Pixabay](https://pixabay.com/) - Sound effects
 
 ## 📜 License
 
