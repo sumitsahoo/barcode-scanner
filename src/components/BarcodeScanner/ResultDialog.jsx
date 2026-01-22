@@ -1,14 +1,33 @@
 import { memo, useEffect, useState } from "react";
 
 const CheckIcon = () => (
-	<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		className="h-8 w-8 text-success"
+		fill="none"
+		viewBox="0 0 24 24"
+		stroke="currentColor"
+		aria-hidden="true"
+	>
 		<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
 	</svg>
 );
 
 const CopyIcon = () => (
-	<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-		<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		className="h-5 w-5 mr-1"
+		fill="none"
+		viewBox="0 0 24 24"
+		stroke="currentColor"
+		aria-hidden="true"
+	>
+		<path
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={2}
+			d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+		/>
 	</svg>
 );
 
@@ -31,7 +50,9 @@ const ResultDialog = ({ isOpen, data, dialogTitleId, onCopy, onClose }) => {
 			role="dialog"
 			aria-labelledby={dialogTitleId}
 		>
-			<div className={`modal-box bg-base-100/90 backdrop-blur-md shadow-2xl border border-white/10 transform transition-all duration-300 ease-out ${isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 translate-y-4"}`}>
+			<div
+				className={`modal-box bg-base-100/90 backdrop-blur-md shadow-2xl border border-white/10 transform transition-all duration-300 ease-out ${isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 translate-y-4"}`}
+			>
 				<div className="flex flex-col items-center gap-4">
 					<div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mb-2">
 						<CheckIcon />
@@ -43,17 +64,30 @@ const ResultDialog = ({ isOpen, data, dialogTitleId, onCopy, onClose }) => {
 						{data?.scanData}
 					</div>
 					<div className="modal-action w-full flex justify-center gap-3 mt-4">
-						<button type="button" className="btn btn-outline flex-1 max-w-35 hover:bg-base-content hover:text-base-100" onClick={onCopy} aria-label="Copy barcode data to clipboard">
-							<CopyIcon />COPY
+						<button
+							type="button"
+							className="btn btn-outline flex-1 max-w-35 hover:bg-base-content hover:text-base-100"
+							onClick={onCopy}
+							aria-label="Copy barcode data to clipboard"
+						>
+							<CopyIcon />
+							COPY
 						</button>
-						<button type="button" className="btn btn-primary flex-1 max-w-35 shadow-lg shadow-primary/20" onClick={onClose} aria-label="Close dialog">
+						<button
+							type="button"
+							className="btn btn-primary flex-1 max-w-35 shadow-lg shadow-primary/20"
+							onClick={onClose}
+							aria-label="Close dialog"
+						>
 							CLOSE
 						</button>
 					</div>
 				</div>
 			</div>
 			<form method="dialog" className="modal-backdrop">
-				<button type="button" onClick={onClose} className="cursor-default">close</button>
+				<button type="button" onClick={onClose} className="cursor-default">
+					close
+				</button>
 			</form>
 		</div>
 	);

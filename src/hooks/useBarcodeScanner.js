@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-	CANVAS_CONTEXT_OPTIONS,
-	SCAN_INTERVAL_MS,
-	VIBRATION_DURATION_MS,
-} from "../constants/scanner";
+import { CANVAS_CONTEXT_OPTIONS, SCAN_INTERVAL_MS, VIBRATION_DURATION_MS } from "../constants/scanner";
 import { getMediaConstraints, stopAllTracks } from "../utils/barcodeHelpers";
+import { playScanSound } from "../utils/sound";
 
 /**
  * Custom hook for barcode scanning logic and camera state management
@@ -24,7 +21,6 @@ export const useBarcodeScanner = () => {
 	// Refs for DOM elements
 	const videoRef = useRef(null);
 	const canvasRef = useRef(null);
-	const audioRef = useRef(null);
 	const contextRef = useRef(null);
 
 	// Refs for scanning control - using a single session ID to track scan sessions
@@ -62,15 +58,12 @@ export const useBarcodeScanner = () => {
 		handleStopScan();
 		setScanState((prev) => ({ ...prev, data, showDialog: true }));
 		window?.navigator?.vibrate?.(VIBRATION_DURATION_MS);
-		audioRef.current?.play().catch(() => { });
+		playScanSound();
 	};
 
 	// Initialize Web Worker - only once on mount
 	useEffect(() => {
-		workerRef.current = new Worker(
-			new URL("../workers/scanner.worker.js", import.meta.url),
-			{ type: "module" },
-		);
+		workerRef.current = new Worker(new URL("../workers/scanner.worker.js", import.meta.url), { type: "module" });
 
 		workerRef.current.onmessage = (e) => {
 			const { found, data, sessionId } = e.data;
@@ -143,11 +136,7 @@ export const useBarcodeScanner = () => {
 
 			// Downscale for performance - limit max dimension to 1280px
 			const MAX_SCAN_DIMENSION = 1280;
-			const scale = Math.min(
-				MAX_SCAN_DIMENSION / width,
-				MAX_SCAN_DIMENSION / height,
-				1,
-			);
+			const scale = Math.min(MAX_SCAN_DIMENSION / width, MAX_SCAN_DIMENSION / height, 1);
 			const scanWidth = Math.floor(width * scale);
 			const scanHeight = Math.floor(height * scale);
 
@@ -188,10 +177,9 @@ export const useBarcodeScanner = () => {
 					isWorkerBusy.current = true;
 
 					// Send to worker with session ID for tracking
-					workerRef.current.postMessage(
-						{ imageData, type: "scan", sessionId: currentSession },
-						[imageData.data.buffer]
-					);
+					workerRef.current.postMessage({ imageData, type: "scan", sessionId: currentSession }, [
+						imageData.data.buffer,
+					]);
 
 					animationFrameId.current = requestAnimationFrame(scanTick);
 				} catch {
@@ -227,8 +215,7 @@ export const useBarcodeScanner = () => {
 				return;
 			}
 
-			const stream =
-				await navigator.mediaDevices.getUserMedia(mediaConstraints);
+			const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
 
 			// Check again after getting stream
 			if (currentSession !== scanSessionRef.current) {
@@ -282,10 +269,7 @@ export const useBarcodeScanner = () => {
 		setScanState((prev) => ({ ...prev, showDialog: false }));
 	}, [scanState.data?.scanData]);
 
-	const handleShowDialog = useCallback(
-		() => setScanState((prev) => ({ ...prev, showDialog: !prev.showDialog })),
-		[],
-	);
+	const handleShowDialog = useCallback(() => setScanState((prev) => ({ ...prev, showDialog: !prev.showDialog })), []);
 
 	// Cleanup on unmount - store handleStopScan ref for cleanup
 	const handleStopScanRef = useRef(handleStopScan);
@@ -297,7 +281,6 @@ export const useBarcodeScanner = () => {
 		scanState,
 		videoRef,
 		canvasRef,
-		audioRef,
 		handleScan,
 		handleStopScan,
 		handleSwitchCamera,

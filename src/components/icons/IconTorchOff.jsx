@@ -18,13 +18,7 @@ const IconTorchOff = (props) => (
 			strokeLinecap="round"
 			strokeLinejoin="round"
 		/>
-		<path
-			d="M22 2L2 22"
-			stroke="currentColor"
-			strokeWidth="1.5"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
+		<path d="M22 2L2 22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
 	</Icon>
 );
 

@@ -14,14 +14,10 @@ const REQUIRED_ENV_VARS = ["VITE_APP_BASE_PATH"];
  * @throws {Error} If any required environment variable is missing
  */
 export const validateEnv = () => {
-	const missing = REQUIRED_ENV_VARS.filter(
-		(varName) => !import.meta.env[varName],
-	);
+	const missing = REQUIRED_ENV_VARS.filter((varName) => !import.meta.env[varName]);
 
 	if (missing.length > 0) {
-		throw new Error(
-			`Missing required environment variables: ${missing.join(", ")}`,
-		);
+		throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
 	}
 };
 

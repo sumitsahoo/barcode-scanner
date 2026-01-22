@@ -31,8 +31,12 @@ class ErrorBoundary extends Component {
 							</details>
 						)}
 						<div className="card-actions justify-end mt-4">
-							<button type="button" className="btn btn-primary" onClick={this.handleReset}>Try Again</button>
-							<button type="button" className="btn btn-outline" onClick={() => window.location.reload()}>Reload Page</button>
+							<button type="button" className="btn btn-primary" onClick={this.handleReset}>
+								Try Again
+							</button>
+							<button type="button" className="btn btn-outline" onClick={() => window.location.reload()}>
+								Reload Page
+							</button>
 						</div>
 					</div>
 				</div>
