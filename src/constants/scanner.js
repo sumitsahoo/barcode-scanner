@@ -25,8 +25,7 @@ export const VIBRATION_DURATION_MS = 200;
  * @constant {Object}
  */
 export const CANVAS_CONTEXT_OPTIONS = {
-	willReadFrequently: true,
-	alpha: false,
-	desynchronized: true,
+  willReadFrequently: true,
+  alpha: false,
+  desynchronized: true,
 };
-

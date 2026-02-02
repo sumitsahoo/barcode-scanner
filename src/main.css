@@ -5,69 +5,69 @@
 /* Primary: #4db8a8, Secondary: #7bc96f */
 
 @plugin "daisyui/theme" {
-	name: "customtheme";
-	default: true;
-	prefersdark: false;
-	color-scheme: light;
+  name: "customtheme";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
 
-	--color-base-100: #ffffff;
-	--color-base-200: #f8fafa;
-	--color-base-300: #e8f0ef;
-	--color-base-content: #2d5550;
-	--color-primary: #4db8a8;
-	--color-primary-content: #ffffff;
-	--color-secondary: #7bc96f;
-	--color-secondary-content: #ffffff;
-	--color-accent: #26baa4;
-	--color-accent-content: #ffffff;
-	--color-neutral: #3d4451;
-	--color-neutral-content: #ffffff;
-	--color-info: #2094f3;
-	--color-info-content: #ffffff;
-	--color-success: #009485;
-	--color-success-content: #ffffff;
-	--color-warning: #ff9900;
-	--color-warning-content: #ffffff;
-	--color-error: #ff5724;
-	--color-error-content: #ffffff;
+  --color-base-100: #ffffff;
+  --color-base-200: #f8fafa;
+  --color-base-300: #e8f0ef;
+  --color-base-content: #2d5550;
+  --color-primary: #4db8a8;
+  --color-primary-content: #ffffff;
+  --color-secondary: #7bc96f;
+  --color-secondary-content: #ffffff;
+  --color-accent: #26baa4;
+  --color-accent-content: #ffffff;
+  --color-neutral: #3d4451;
+  --color-neutral-content: #ffffff;
+  --color-info: #2094f3;
+  --color-info-content: #ffffff;
+  --color-success: #009485;
+  --color-success-content: #ffffff;
+  --color-warning: #ff9900;
+  --color-warning-content: #ffffff;
+  --color-error: #ff5724;
+  --color-error-content: #ffffff;
 
-	--radius-selector: 1rem;
-	--radius-field: 0.25rem;
-	--radius-box: 0.5rem;
-	--size-selector: 0.25rem;
-	--size-field: 0.25rem;
-	--border: 1px;
-	--depth: 1;
-	--noise: 0;
+  --radius-selector: 1rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
 }
 
 /* Dark theme - inherits shared radius/size/border properties from light theme */
 @plugin "daisyui/theme" {
-	name: "customtheme-dark";
-	default: false;
-	prefersdark: true;
-	color-scheme: dark;
+  name: "customtheme-dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: dark;
 
-	--color-base-100: #0f1419;
-	--color-base-200: #1a2229;
-	--color-base-300: #242d35;
-	--color-base-content: #e8f4f2;
-	--color-primary: #5dd4c0;
-	--color-primary-content: #0f1419;
-	--color-secondary: #8de67c;
-	--color-secondary-content: #0f1419;
-	--color-accent: #3dd9c1;
-	--color-accent-content: #0f1419;
-	--color-neutral: #2a3441;
-	--color-neutral-content: #e8f4f2;
-	--color-info: #4db3ff;
-	--color-info-content: #0f1419;
-	--color-success: #00c9b7;
-	--color-success-content: #0f1419;
-	--color-warning: #ffad33;
-	--color-warning-content: #0f1419;
-	--color-error: #ff6b47;
-	--color-error-content: #ffffff;
+  --color-base-100: #0f1419;
+  --color-base-200: #1a2229;
+  --color-base-300: #242d35;
+  --color-base-content: #e8f4f2;
+  --color-primary: #5dd4c0;
+  --color-primary-content: #0f1419;
+  --color-secondary: #8de67c;
+  --color-secondary-content: #0f1419;
+  --color-accent: #3dd9c1;
+  --color-accent-content: #0f1419;
+  --color-neutral: #2a3441;
+  --color-neutral-content: #e8f4f2;
+  --color-info: #4db3ff;
+  --color-info-content: #0f1419;
+  --color-success: #00c9b7;
+  --color-success-content: #0f1419;
+  --color-warning: #ffad33;
+  --color-warning-content: #0f1419;
+  --color-error: #ff6b47;
+  --color-error-content: #ffffff;
 }
 
 /*
@@ -79,133 +79,133 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-	*,
-	::after,
-	::before,
-	::backdrop,
-	::file-selector-button {
-		border-color: var(--color-gray-200, currentColor);
-	}
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
 
-	/* Prevent scrolling on the entire page */
-	html,
-	body {
-		overflow: hidden;
-		height: 100dvh;
-		margin: 0;
-		padding: 0;
-	}
+  /* Prevent scrolling on the entire page */
+  html,
+  body {
+    overflow: hidden;
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+  }
 
-	#root {
-		height: 100dvh;
-		overflow: hidden;
-	}
+  #root {
+    height: 100dvh;
+    overflow: hidden;
+  }
 }
 
 /* Barcode scanning animation - optimized for smooth 60fps performance */
 @utility animate-scan {
-	/* Custom cubic-bezier for smoother, more natural easing than ease-in-out */
-	animation: scan 2.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-	/* Hint to browser to optimize this property for animation */
-	will-change: transform;
-	/* Force GPU acceleration by creating a new composite layer */
-	transform: translateZ(0);
-	/* Prevent flickering and improve rendering performance */
-	backface-visibility: hidden;
-	/* Further optimize 3D transform rendering */
-	perspective: 1000px;
+  /* Custom cubic-bezier for smoother, more natural easing than ease-in-out */
+  animation: scan 2.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  /* Hint to browser to optimize this property for animation */
+  will-change: transform;
+  /* Force GPU acceleration by creating a new composite layer */
+  transform: translateZ(0);
+  /* Prevent flickering and improve rendering performance */
+  backface-visibility: hidden;
+  /* Further optimize 3D transform rendering */
+  perspective: 1000px;
 }
 
 /* Keyframe animations for scan line effects */
 @keyframes scan {
-	0% {
-		transform: translateY(0);
-	}
-	50% {
-		transform: translateY(45vh);
-	}
-	100% {
-		transform: translateY(0);
-	}
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(45vh);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 @keyframes trail-down {
-	0%,
-	100% {
-		opacity: 0;
-	}
-	15% {
-		opacity: 0.5;
-	}
-	35% {
-		opacity: 0.5;
-	}
-	50% {
-		opacity: 0;
-	}
+  0%,
+  100% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.5;
+  }
+  35% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 @keyframes trail-up {
-	0%,
-	100% {
-		opacity: 0;
-	}
-	50% {
-		opacity: 0;
-	}
-	65% {
-		opacity: 0.5;
-	}
-	85% {
-		opacity: 0.5;
-	}
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  65% {
+    opacity: 0.5;
+  }
+  85% {
+    opacity: 0.5;
+  }
 }
 
 /* Trailing animation utilities for scan line effects */
 @utility animate-trail-down {
-	animation: trail-down 2.5s linear infinite;
+  animation: trail-down 2.5s linear infinite;
 }
 
 @utility animate-trail-up {
-	animation: trail-up 2.5s linear infinite;
+  animation: trail-up 2.5s linear infinite;
 }
 
 /* CSS Particle animations */
 @keyframes float {
-	0%,
-	100% {
-		transform: translate(0, 0) scale(1);
-		opacity: 0.6;
-	}
-	25% {
-		transform: translate(10px, -15px) scale(1.1);
-		opacity: 0.8;
-	}
-	50% {
-		transform: translate(-5px, -25px) scale(0.9);
-		opacity: 0.7;
-	}
-	75% {
-		transform: translate(-15px, -10px) scale(1.05);
-		opacity: 0.9;
-	}
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translate(10px, -15px) scale(1.1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-5px, -25px) scale(0.9);
+    opacity: 0.7;
+  }
+  75% {
+    transform: translate(-15px, -10px) scale(1.05);
+    opacity: 0.9;
+  }
 }
 
 @keyframes pulse-slow {
-	0%,
-	100% {
-		opacity: 0.15;
-	}
-	50% {
-		opacity: 0.35;
-	}
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 @utility animate-float {
-	animation: float linear infinite;
-	will-change: transform, opacity;
+  animation: float linear infinite;
+  will-change: transform, opacity;
 }
 
 @utility animate-pulse-slow {
-	animation: pulse-slow 4s ease-in-out infinite;
+  animation: pulse-slow 4s ease-in-out infinite;
 }
