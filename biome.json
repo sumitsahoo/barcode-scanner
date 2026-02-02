@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.3.13/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -7,58 +7,61 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!dist/**", "!build/**", "!!**/dev-dist"]
-	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "tab",
-		"indentWidth": 2,
-		"lineWidth": 120,
-		"lineEnding": "lf",
-		"bracketSpacing": true
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true,
-			"a11y": {
-				"useMediaCaption": "off"
-			}
-		}
-	},
-	"assist": {
-		"enabled": true,
-		"actions": {
-			"source": {
-				"organizeImports": "on"
-			}
-		}
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "double",
-			"semicolons": "always",
-			"trailingCommas": "all",
-			"arrowParentheses": "always"
+		"includes": [
+			"**",
+			"!dist",
+			"!build/**"!!**/dev-dist"]
 		},
-		"jsxRuntime": "transparent"
-	},
-	"json": {
 		"formatter": {
 			"enabled": true,
-			"indentStyle": "tab"
-		}
-	},
-	"css": {
-		"parser": {
-			"cssModules": false,
-			"tailwindDirectives": true
-		},
-		"formatter": {
-			"enabled": true
+			"indentStyle": "tab",
+			"indentWidth": 2,
+			"lineWidth": 120,
+			"lineEnding": "lf",
+			"bracketSpacing": true
 		},
 		"linter": {
-			"enabled": true
+			"enabled": true,
+			"rules": {
+				"recommended": true,
+				"a11y": {
+					"useMediaCaption": "off"
+				}
+			}
+		},
+		"assist": {
+			"enabled": true,
+			"actions": {
+				"source": {
+					"organizeImports": "on"
+				}
+			}
+		},
+		"javascript": {
+			"formatter": {
+				"quoteStyle": "double",
+				"semicolons": "always",
+				"trailingCommas": "all",
+				"arrowParentheses": "always"
+			},
+			"jsxRuntime": "transparent"
+		},
+		"json": {
+			"formatter": {
+				"enabled": true,
+				"indentStyle": "tab"
+			}
+		},
+		"css": {
+			"parser": {
+				"cssModules": false,
+				"tailwindDirectives": true
+			},
+			"formatter": {
+				"enabled": true
+			},
+			"linter": {
+				"enabled": true
+			}
 		}
 	}
-}
