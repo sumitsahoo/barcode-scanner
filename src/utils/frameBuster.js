@@ -5,5 +5,5 @@
  */
 
 if (window.top !== window.self) {
-	window.top.location = window.self.location;
+  window.top.location = window.self.location;
 }
